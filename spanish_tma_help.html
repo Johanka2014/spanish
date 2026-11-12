@@ -2,64 +2,1625 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#123e56">
     <meta name="description" content="Bilingual Spanish practice scripts for TMA 01–04 and spoken vocabulary organised by course section.">
     <title>Spanish TMA Practice | L106 class edition</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23123e56'/%3E%3Cpath d='M13 18h16q4 0 4 4v26q-4-3-9-3H13zM51 18H35q-4 0-4 4v26q4-3 9-3h11z' fill='none' stroke='%23f5c46a' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css">
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            DEFAULT: '#123e56',
+                            dark: '#0c2b3d',
+                            light: '#1d5b7d',
+                            soft: '#e6f1f6',
+                            gold: '#f5c46a',
+                            goldDark: '#d9a33f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --brand-navy: #123e56;
+            --brand-gold: #f5c46a;
+            --bg-top: #f0f7fa;
+            --bg-bottom: #fdfbf7;
+        }
+        body {
+            background: linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+        /* Custom Range Slider */
+        input[type="range"].speech-speed-range {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: #cbd5e1;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type="range"].speech-speed-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #123e56;
+            border: 2px solid #f5c46a;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        input[type="range"].speech-speed-range::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        /* Speaking highlight animation */
+        .sentence-row.speaking-active {
+            background-color: #fef9c3 !important;
+            border-left: 4px solid #123e56 !important;
+            box-shadow: 0 4px 12px -2px rgba(18, 62, 86, 0.12);
+        }
+        .vocab-card.speaking-active {
+            ring: 2px solid #f5c46a;
+            background-color: #fefce8;
+            transform: translateY(-2px);
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
 </head>
-<body>
-<header class="site-header">
-    <div class="brand"><span class="brand-icon" aria-hidden="true">ñ</span><span>Spanish TMA Practice <small>L106 · Class edition</small></span></div>
-    <nav class="primary-nav" aria-label="Main navigation">
-        <button type="button" class="main-tab active" data-view="practice">TMA practice</button>
-        <button type="button" class="main-tab" data-view="vocabulary">Vocabulary by Sección</button>
-        <button type="button" class="main-tab" data-view="block">Text practice</button>
-    </nav>
+<body class="flex flex-col min-h-screen antialiased selection:bg-brand-gold/40 selection:text-brand-dark">
+
+<!-- Top Site Header -->
+<header class="site-header sticky top-0 z-30 bg-brand text-white shadow-lg border-b-4 border-brand-gold">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <!-- Brand Logo -->
+        <div class="brand flex items-center gap-3">
+            <span class="brand-icon w-10 h-10 rounded-xl bg-brand-dark border-2 border-brand-gold text-brand-gold font-extrabold text-2xl flex items-center justify-center shadow-inner select-none" aria-hidden="true">ñ</span>
+            <div>
+                <span class="font-bold text-lg sm:text-xl tracking-tight block leading-none">Spanish TMA Practice</span>
+                <small class="text-brand-gold text-xs font-medium tracking-wider uppercase block mt-1">L106 · Class edition</small>
+            </div>
+        </div>
+
+        <!-- Primary Navigation Tabs -->
+        <nav class="primary-nav flex flex-wrap items-center gap-1.5 bg-brand-dark/60 p-1.5 rounded-xl border border-white/10" aria-label="Main navigation">
+            <button type="button" class="main-tab active flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-brand-gold text-brand-dark shadow-sm" data-view="practice">
+                TMA practice
+            </button>
+            <button type="button" class="main-tab flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold transition-all text-white/85 hover:text-white hover:bg-white/10" data-view="vocabulary">
+                Vocabulary by Sección
+            </button>
+            <button type="button" class="main-tab flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold transition-all text-white/85 hover:text-white hover:bg-white/10" data-view="block">
+                Text practice
+            </button>
+        </nav>
+    </div>
 </header>
-<main class="site-main">
-    <section id="practice-view" class="view" aria-labelledby="practice-heading">
-        <div class="section-intro"><div><p class="eyebrow">LISTEN AND REHEARSE</p><h1 id="practice-heading">TMA 01–04 practice</h1><p>Original example answers in Spanish with English beside each line. Choose a test, listen, then adapt the details for yourself.</p></div></div>
-        <div class="tma-switch" role="tablist" aria-label="Choose assignment"></div>
-        <div id="tma-content"></div>
+
+<!-- Main Content Container -->
+<main class="site-main flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+    <!-- ==========================================
+         VIEW 1: TMA 01-04 PRACTICE
+         ========================================== -->
+    <section id="practice-view" class="view space-y-6" aria-labelledby="practice-heading">
+        <div class="section-intro flex flex-col md:flex-row md:items-end justify-between gap-4 bg-white/80 backdrop-blur rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 border-t-4 border-t-brand">
+            <div>
+                <p class="eyebrow text-xs font-bold uppercase tracking-widest text-brand-light mb-1">LISTEN AND REHEARSE</p>
+                <h1 id="practice-heading" class="text-2xl sm:text-3xl font-extrabold text-brand-dark">TMA 01–04 practice</h1>
+                <p class="text-slate-600 mt-1 text-sm sm:text-base max-w-2xl">Original example answers in Spanish with English beside each line. Choose a test, listen, then adapt the details for yourself.</p>
+            </div>
+            <!-- Global Backup / Restore Data Buttons -->
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <button type="button" id="export-data-btn" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition flex items-center gap-1.5 shadow-sm" title="Download your customized TMA scripts and vocabulary">
+                    <span>⬇</span> Export my edits
+                </button>
+                <label class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Restore previously exported JSON file">
+                    <span>⬆</span> Import
+                    <input type="file" id="import-data-input" accept=".json" class="hidden">
+                </label>
+            </div>
+        </div>
+
+        <!-- TMA Assignment Switcher Tabs -->
+        <div class="tma-switch flex flex-wrap gap-2" role="tablist" aria-label="Choose assignment"></div>
+
+        <!-- Dynamic TMA Content Container -->
+        <div id="tma-content" class="space-y-6"></div>
     </section>
-    <section id="vocabulary-view" class="view" aria-labelledby="vocab-heading" hidden>
-        <div class="section-intro"><div><p class="eyebrow">COURSE VOCABULARY</p><h1 id="vocab-heading">Vocabulary by Sección</h1><p>Browse the course topics and everyday situations. Select a word or phrase to hear it in Spanish.</p></div></div>
-        <div class="vocab-toolbar"><div class="unit-switch" role="tablist" aria-label="Choose unit"></div><label class="search-label" for="word-search">Find a word <input id="word-search" type="search" placeholder="Search Spanish or English…" autocomplete="off"></label></div>
+
+    <!-- ==========================================
+         VIEW 2: VOCABULARY BY SECCIÓN
+         ========================================== -->
+    <section id="vocabulary-view" class="view space-y-6" aria-labelledby="vocab-heading" hidden>
+        <div class="section-intro flex flex-col md:flex-row md:items-end justify-between gap-4 bg-white/80 backdrop-blur rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 border-t-4 border-t-brand">
+            <div>
+                <p class="eyebrow text-xs font-bold uppercase tracking-widest text-brand-light mb-1">COURSE VOCABULARY</p>
+                <h1 id="vocab-heading" class="text-2xl sm:text-3xl font-extrabold text-brand-dark">Vocabulary by Sección</h1>
+                <p class="text-slate-600 mt-1 text-sm sm:text-base max-w-2xl">Browse the course topics and everyday situations. Select a word or phrase to hear it in Spanish.</p>
+            </div>
+            <button type="button" id="toggle-add-vocab-btn" class="self-start md:self-auto px-4 py-2.5 rounded-xl bg-brand text-white text-sm font-semibold hover:bg-brand-light transition shadow-sm flex items-center gap-2">
+                <span>＋</span> Add custom phrase
+            </button>
+        </div>
+
+        <!-- Collapsible Add Custom Vocab Form -->
+        <form id="add-vocab-form" class="hidden bg-white rounded-2xl p-5 shadow-md border-2 border-brand-gold/70 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <h2 class="font-bold text-brand-dark text-base">Add your own word or phrase</h2>
+                <button type="button" id="close-add-vocab-btn" class="text-slate-400 hover:text-slate-600 text-sm font-medium">✕ Close</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" for="custom-vocab-unit">Sección</label>
+                    <select id="custom-vocab-unit" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" for="custom-vocab-es">Spanish word / phrase *</label>
+                    <input id="custom-vocab-es" type="text" required placeholder="e.g. dar un paseo" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" for="custom-vocab-en">English meaning *</label>
+                    <input id="custom-vocab-en" type="text" required placeholder="e.g. to go for a walk" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" for="custom-vocab-example">Example in Spanish (optional)</label>
+                    <input id="custom-vocab-example" type="text" placeholder="e.g. Me gusta dar un paseo por la tarde." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button type="submit" class="px-4 py-2 rounded-xl bg-brand text-white text-sm font-semibold hover:bg-brand-light transition shadow-sm">Save to Vocabulary</button>
+            </div>
+        </form>
+
+        <!-- Vocab Toolbar: Unit Switcher + Live Search + Audio Bar -->
+        <div class="vocab-toolbar bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="unit-switch flex flex-wrap gap-1.5" role="tablist" aria-label="Choose unit"></div>
+                <label class="search-label flex flex-col sm:flex-row sm:items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-600 shrink-0" for="word-search">
+                    <span>Find a word</span>
+                    <input id="word-search" type="search" placeholder="Search Spanish or English…" autocomplete="off" class="w-full sm:w-64 rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2 text-sm font-normal text-slate-800 focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition">
+                </label>
+            </div>
+            <!-- Shared Mini Audio Settings Bar in Vocab View -->
+            <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-semibold text-brand-dark">Listening speed:</span>
+                    <div class="speed-presets inline-flex rounded-lg bg-slate-100 p-0.5 border border-slate-200" aria-label="Speech speed presets">
+                        <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.3">0.30×</button>
+                        <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.5">0.50×</button>
+                        <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.65">0.65×</button>
+                        <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.9">0.90×</button>
+                        <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="1.2">1.20×</button>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <label class="flex items-center gap-1.5 font-semibold text-brand-dark">
+                        Voice
+                        <select class="voice-select rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 outline-none focus:border-brand"></select>
+                    </label>
+                    <button type="button" class="action px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition" data-action="stop" disabled>■ Stop</button>
+                    <span class="audio-status font-medium text-brand-light" role="status">Ready to listen</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vocabulary Grid Content -->
         <div id="vocab-content"></div>
     </section>
-    <section id="block-view" class="view" aria-labelledby="block-heading" hidden>
-        <div class="section-intro"><div><p class="eyebrow">PASTE, TRANSLATE AND LISTEN</p><h1 id="block-heading">Text practice</h1><p>Paste a paragraph or a longer passage in either language. Translate it, edit both versions and listen to the Spanish with the same voice and speed controls.</p></div></div>
-        <article class="assignment-card block-card">
-            <div class="note-panel"><p>Your text is saved in this browser. Automatic translation uses Chrome’s on-device language pack when available, with no OpenAI tokens. Review the result for the Spanish you want to use. On other browsers, use the free translator link and paste its result back here.</p></div>
-            <div class="block-toolbar translation-controls">
-                <label for="block-direction">Translate from <select id="block-direction"><option value="en-es">English → Spanish</option><option value="es-en">Spanish → English</option></select></label>
-                <button type="button" class="action" data-action="block-enable">Enable free live translation</button>
-                <button type="button" class="action" data-action="block-external">Open Google Translate ↗</button>
-                <button type="button" class="action" data-action="block-clear">Clear text</button>
+
+    <!-- ==========================================
+         VIEW 3: TEXT PRACTICE (BLOCK TRANSLATOR)
+         ========================================== -->
+    <section id="block-view" class="view space-y-6" aria-labelledby="block-heading" hidden>
+        <div class="section-intro bg-white/80 backdrop-blur rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 border-t-4 border-t-brand">
+            <div>
+                <p class="eyebrow text-xs font-bold uppercase tracking-widest text-brand-light mb-1">PASTE, TRANSLATE AND LISTEN</p>
+                <h1 id="block-heading" class="text-2xl sm:text-3xl font-extrabold text-brand-dark">Text practice</h1>
+                <p class="text-slate-600 mt-1 text-sm sm:text-base max-w-2xl">Paste a paragraph or a longer passage in either language. Translate it, edit both versions and listen to the Spanish with the same voice and speed controls.</p>
             </div>
-            <p class="block-translation-status" role="status">Preparing automatic translation where supported.</p>
-            <div class="block-fields">
-                <label for="block-english">English <textarea id="block-english" rows="13" maxlength="12000" placeholder="Paste or write English text here…"></textarea></label>
-                <label for="block-spanish">Spanish <textarea id="block-spanish" lang="es" rows="13" maxlength="12000" placeholder="Pega o escribe un texto en español aquí…"></textarea></label>
+        </div>
+
+        <article class="assignment-card block-card bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 space-y-5">
+            <div class="note-panel bg-brand-soft/70 border-l-4 border-brand rounded-r-xl p-4 text-sm text-brand-dark">
+                <p>Your text is saved in this browser. Automatic translation uses Chrome’s on-device language pack when available, or a built-in free translation service with no paid tokens required. Review the result for the Spanish you want to use. You can also open Google Translate in a new tab at any time.</p>
             </div>
-            <div class="player" aria-label="Spanish listening controls">
-                <button type="button" class="action primary" data-action="block-play">▶ Listen to Spanish</button>
-                <button type="button" class="action" data-action="block-selection">▶ Hear selection</button>
-                <button type="button" class="action" data-action="stop" disabled>■ Stop</button>
-                <div class="speed-control"><label for="block-speed-range">Speed <output id="block-speed-value" for="block-speed-range">0.90×</output></label><input id="block-speed-range" class="speech-speed-range" type="range" min="0.30" max="1.20" step="0.05" value="0.90" aria-valuetext="0.90 times normal speed"><div class="speed-presets" aria-label="Speech speed presets"><button type="button" class="speed-preset" data-action="set-speed" data-rate="0.3">0.30×</button><button type="button" class="speed-preset" data-action="set-speed" data-rate="0.5">0.50×</button><button type="button" class="speed-preset" data-action="set-speed" data-rate="0.65">0.65×</button><button type="button" class="speed-preset" data-action="set-speed" data-rate="0.9">0.90×</button><button type="button" class="speed-preset" data-action="set-speed" data-rate="1.2">1.20×</button></div></div>
-                <label for="block-voice-select">Voice <select id="block-voice-select" class="voice-select"></select></label>
-                <button type="button" class="action" data-action="test-voice">Test</button>
-                <span class="audio-status" role="status">Ready to listen</span>
+
+            <div class="block-toolbar translation-controls flex flex-wrap items-center gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                <label for="block-direction" class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                    Translate from
+                    <select id="block-direction" class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-brand-dark focus:border-brand outline-none">
+                        <option value="en-es">English → Spanish</option>
+                        <option value="es-en">Spanish → English</option>
+                    </select>
+                </label>
+                <button type="button" class="action px-3.5 py-2 rounded-xl bg-brand text-white text-sm font-semibold hover:bg-brand-light transition shadow-sm" data-action="block-translate-now">
+                    ⇄ Translate now
+                </button>
+                <button type="button" class="action px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100 transition" data-action="block-enable">
+                    Enable free live translation
+                </button>
+                <button type="button" class="action px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100 transition" data-action="block-external">
+                    Open Google Translate ↗
+                </button>
+                <button type="button" class="action px-3.5 py-2 rounded-xl bg-white border border-rose-200 text-rose-700 text-sm font-semibold hover:bg-rose-50 transition ml-auto" data-action="block-clear">
+                    Clear text
+                </button>
+            </div>
+
+            <p class="block-translation-status text-xs font-semibold text-brand-light flex items-center gap-2" role="status">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                <span id="block-status-text">Ready: Type or paste text and click "Translate now" (or enable live translation).</span>
+            </p>
+
+            <div class="block-fields grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label for="block-english" class="flex flex-col gap-1.5 text-sm font-bold text-slate-700">
+                    <span class="flex items-center justify-between">
+                        <span>English</span>
+                        <span class="text-xs font-normal text-slate-400">Source / Notes</span>
+                    </span>
+                    <textarea id="block-english" rows="11" maxlength="12000" placeholder="Paste or write English text here…" class="w-full rounded-xl border border-slate-300 p-3.5 text-sm font-normal text-slate-800 leading-relaxed focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none resize-y"></textarea>
+                </label>
+                <label for="block-spanish" class="flex flex-col gap-1.5 text-sm font-bold text-brand-dark">
+                    <span class="flex items-center justify-between">
+                        <span>Spanish (Español)</span>
+                        <span class="text-xs font-normal text-slate-400">Highlight words to hear selection</span>
+                    </span>
+                    <textarea id="block-spanish" lang="es" rows="11" maxlength="12000" placeholder="Pega o escribe un texto en español aquí…" class="w-full rounded-xl border-2 border-brand/30 bg-brand-soft/20 p-3.5 text-sm font-normal text-slate-900 leading-relaxed focus:bg-white focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none resize-y"></textarea>
+                </label>
+            </div>
+
+            <!-- Full Audio Player Bar -->
+            <div class="player bg-slate-50 rounded-2xl p-4 border border-slate-200/90 space-y-4" aria-label="Spanish listening controls">
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <button type="button" class="action primary px-4 py-2.5 rounded-xl bg-brand text-white text-sm font-bold hover:bg-brand-light transition shadow-sm flex items-center gap-1.5" data-action="block-play">
+                        ▶ Listen to Spanish
+                    </button>
+                    <button type="button" class="action px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100 transition" data-action="block-selection">
+                        ▶ Hear selection
+                    </button>
+                    <button type="button" class="action px-3.5 py-2.5 rounded-xl bg-rose-600 text-white text-sm font-semibold hover:bg-rose-700 disabled:opacity-40 disabled:pointer-events-none transition" data-action="stop" disabled>
+                        ■ Stop
+                    </button>
+                    <span class="audio-status ml-auto text-xs font-semibold px-3 py-1.5 rounded-full bg-white border border-slate-200 text-brand-dark" role="status">Ready to listen</span>
+                </div>
+
+                <div class="pt-3 border-t border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4 text-xs">
+                    <!-- Speed Control + Presets -->
+                    <div class="speed-control flex flex-wrap items-center gap-3">
+                        <label for="block-speed-range" class="font-bold text-slate-700 min-w-[90px]">
+                            Speed <output id="block-speed-value" for="block-speed-range" class="text-brand font-extrabold ml-1">0.90×</output>
+                        </label>
+                        <input id="block-speed-range" class="speech-speed-range w-32 sm:w-40" type="range" min="0.30" max="1.20" step="0.05" value="0.90" aria-valuetext="0.90 times normal speed">
+                        <div class="speed-presets inline-flex rounded-lg bg-white p-0.5 border border-slate-200 shadow-2xs" aria-label="Speech speed presets">
+                            <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.3">0.30×</button>
+                            <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.5">0.50×</button>
+                            <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.65">0.65×</button>
+                            <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.9">0.90×</button>
+                            <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="1.2">1.20×</button>
+                        </div>
+                    </div>
+
+                    <!-- Voice Selector + Test Button -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label for="block-voice-select" class="flex items-center gap-2 font-bold text-slate-700">
+                            Voice
+                            <select id="block-voice-select" class="voice-select rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-800 outline-none focus:border-brand"></select>
+                        </label>
+                        <button type="button" class="action px-3 py-1.5 rounded-lg bg-brand-gold/30 hover:bg-brand-gold/50 text-brand-dark font-bold transition" data-action="test-voice">
+                            Test voice
+                        </button>
+                    </div>
+                </div>
             </div>
         </article>
     </section>
+
 </main>
-<footer class="site-footer">Independent practice examples. Use your official coursework and tutor feedback when preparing your own assignment.</footer>
+
+<!-- Site Footer -->
+<footer class="site-footer mt-12 border-t border-slate-200/80 bg-white/70 py-5 px-4 text-center text-xs sm:text-sm text-slate-500">
+    Independent practice examples for L106 Beginners' Spanish. Use your official coursework and tutor feedback when preparing your own assignment.
+</footer>
+
+<!-- Toast Notification Banner -->
+<div id="toast-banner" class="fixed bottom-5 right-5 z-50 hidden max-w-sm rounded-xl bg-brand-dark text-white px-4 py-3 text-sm font-medium shadow-xl border-l-4 border-brand-gold transition-all"></div>
+
+<!-- Screen Reader Live Status -->
 <div id="live-status" class="sr-only" role="status" aria-live="polite"></div>
-<script src="tmas.js"></script>
-<script src="vocab.js"></script>
-<script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5879e428b92005f',t:'MTc5NDM0MDU2Mg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5879e428b92005f',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+<!-- ==========================================
+     APPLICATION DATA & LOGIC (SELF-CONTAINED)
+     ========================================== -->
+<script>
+(function () {
+    'use strict';
+
+    /* ==========================================================================
+       1. DEFAULT L106 TMA 01–04 DATA (Realistic Open University L106 Scripts)
+       ========================================================================== */
+    const DEFAULT_TMAS = [
+        {
+            id: 'tma01',
+            code: 'TMA 01',
+            title: 'Presentaciones, familia y rutina diaria',
+            subtitle: 'Personal introduction, origin, family, work and daily routine in the present tense',
+            scenario: 'Speak for 1–2 minutes introducing yourself to your tutor and study group. Mention where you live, your family, your job or studies, and what a typical day looks like for you.',
+            tips: 'Focus on clear pronunciation of vowel sounds, gender agreement (cansado/cansada), and reflexive verbs for daily routine (me levanto, me ducho, me acuesto).',
+            lines: [
+                { section: 'Saludo y origen', es: '¡Hola a todos! Me llamo Alex y soy de Inglaterra, pero ahora vivo en un pueblo pequeño cerca de la costa.', en: 'Hello everyone! My name is Alex and I am from England, but now I live in a small town near the coast.' },
+                { section: 'Edad y carácter', es: 'Tengo treinta y ocho años y soy una persona bastante tranquila, trabajadora y muy curiosa.', en: 'I am thirty-eight years old and I am a quite calm, hard-working and very curious person.' },
+                { section: 'Mi familia', es: 'Estoy casado y tengo dos hijos: un niño de diez años que se llama Leo y una niña de siete años que se llama Maya.', en: 'I am married and I have two children: a ten-year-old boy called Leo and a seven-year-old girl called Maya.' },
+                { section: 'Mascotas', es: 'También tenemos un perro pequeño y muy simpático que se llama Chispa.', en: 'We also have a small and very friendly dog called Chispa.' },
+                { section: 'Trabajo y estudios', es: 'Trabajo desde casa como administrativo en una empresa de tecnología y estudio español en la Open University.', en: 'I work from home as an administrator in a technology company and I study Spanish at the Open University.' },
+                { section: 'Motivo para aprender', es: 'Estudio español porque me encanta viajar por España y quiero hablar con la gente local con más confianza.', en: 'I study Spanish because I love travelling around Spain and I want to speak with local people with more confidence.' },
+                { section: 'Rutina por la mañana', es: 'Normalmente, entre semana me despierto temprano, a las seis y media de la mañana, y tomo un café solo.', en: 'Normally, on weekdays I wake up early, at half past six in the morning, and I have a black coffee.' },
+                { section: 'Mañana y trabajo', es: 'Después me ducho, preparo el desayuno para mis hijos y empiezo a trabajar a las ocho y media.', en: 'Afterwards I shower, prepare breakfast for my children and start working at half past eight.' },
+                { section: 'Tarde y tiempo libre', es: 'Termino de trabajar a las cinco de la tarde y, cuando tengo tiempo libre, paseo con mi perro por la playa.', en: 'I finish working at five in the afternoon and, when I have free time, I walk my dog along the beach.' },
+                { section: 'Noche y despedida', es: 'Por la noche cenamos todos juntos a las siete, leo mis apuntes de español durante una hora y me acuesto a las diez y media. ¡Muchas gracias por escuchar!', en: 'In the evening we all have dinner together at seven, I read my Spanish notes for an hour and I go to bed at half past ten. Thank you very much for listening!' }
+            ]
+        },
+        {
+            id: 'tma02',
+            code: 'TMA 02',
+            title: 'Mi barrio, servicios, clima y planes de fin de semana',
+            subtitle: 'Describing your town/neighbourhood, local amenities, weather, and leisure habits',
+            scenario: 'A Spanish exchange partner is visiting your town. Describe what your neighbourhood is like, using hay, ser, and estar correctly, talk about the weather, and explain what you usually do on weekends.',
+            tips: 'Remember the difference between "es" (permanent qualities: mi pueblo es tranquilo), "está" (location: está en el sur), and "hay" (existence: hay un mercado).',
+            lines: [
+                { section: 'Ubicación', es: 'Vivo en una ciudad costera que está situada en el sureste de Inglaterra, a una hora en tren de Londres.', en: 'I live in a coastal town that is located in the south-east of England, an hour by train from London.' },
+                { section: 'Descripción general', es: 'Mi barrio es bastante antiguo, pintoresco y muy agradable para vivir porque no hay demasiado tráfico.', en: 'My neighbourhood is quite old, picturesque and very pleasant to live in because there is not too much traffic.' },
+                { section: 'Servicios e instalaciones', es: 'Cerca de mi casa hay muchas tiendas independientes, una biblioteca moderna, un polideportivo y varios restaurantes excelentes.', en: 'Near my house there are many independent shops, a modern library, a sports centre and several excellent restaurants.' },
+                { section: 'Lo mejor y lo peor', es: 'Lo que más me gusta de mi pueblo es el puerto pesquero, pero lo peor es que en verano hay demasiados turistas y es difícil aparcar.', en: 'What I like most about my town is the fishing harbour, but the worst thing is that in summer there are too many tourists and it is difficult to park.' },
+                { section: 'El clima en invierno', es: 'En cuanto al clima, en invierno hace bastante frío, llueve a menudo y hace mucho viento junto al mar.', en: 'As for the weather, in winter it is quite cold, it rains often and it is very windy by the sea.' },
+                { section: 'El clima en verano', es: 'Sin embargo, en primavera y en verano el tiempo es suave, hace sol y la temperatura es ideal para pasear.', en: 'However, in spring and summer the weather is mild, it is sunny and the temperature is ideal for walking.' },
+                { section: 'Sábados por la mañana', es: 'Los fines de semana mi rutina cambia mucho. Los sábados por la mañana me levanto más tarde y voy al mercado local para comprar fruta y pan fresco.', en: 'At weekends my routine changes a lot. On Saturday mornings I get up later and go to the local market to buy fruit and fresh bread.' },
+                { section: 'Sábados por la tarde', es: 'Por la tarde suelo quedar con mis amigos en una cafetería del centro o vamos al cine si hace mal tiempo.', en: 'In the afternoon I usually meet up with my friends in a café in the centre or we go to the cinema if the weather is bad.' },
+                { section: 'Domingos en familia', es: 'Los domingos nos gusta hacer una excursión por el campo en bicicleta y después preparamos un asado tradicional en casa.', en: 'On Sundays we like to go for a bike ride in the countryside and afterwards we prepare a traditional roast at home.' },
+                { section: 'Invitación', es: 'Cuando vengas a visitarme, podemos caminar por el paseo marítimo y probar el pescado fresco del puerto.', en: 'When you come to visit me, we can walk along the seafront promenade and try the fresh fish from the harbour.' }
+            ]
+        },
+        {
+            id: 'tma03',
+            code: 'TMA 03',
+            title: 'Mis últimas vacaciones, gastronomía y experiencias en el pasado',
+            subtitle: 'Narrating past holidays and restaurant experiences using the pretérito indefinido',
+            scenario: 'Talk about a memorable holiday or trip you took recently. Include where you went, how you travelled, where you stayed, what activities you did, and a special meal you had.',
+            tips: 'Pay special attention to irregular preterite verbs (fui, estuvimos, hice, tuve, pude) and time markers (el año pasado, hace seis meses, el primer día).',
+            lines: [
+                { section: 'Destino y fecha', es: 'El verano pasado fui de vacaciones a Asturias, en el norte de España, durante diez días en el mes de julio.', en: 'Last summer I went on holiday to Asturias, in the north of Spain, for ten days in the month of July.' },
+                { section: 'Transporte y viaje', es: 'Viajé en avión desde Londres hasta Santander con mi pareja y allí alquilamos un coche pequeño para recorrer la costa.', en: 'I travelled by plane from London to Santander with my partner and there we rented a small car to tour the coast.' },
+                { section: 'Alojamiento', es: 'Nos alojamos en una casa rural preciosa rodeada de montañas y muy cerca de los Picos de Europa.', en: 'We stayed in a lovely rural house surrounded by mountains and very close to the Picos de Europa.' },
+                { section: 'Primeros días', es: 'El primer día descansamos en el jardín, dimos un paseo por el pueblo de Llanes y visitamos el casco histórico.', en: 'On the first day we rested in the garden, went for a walk around the town of Llanes and visited the historic old town.' },
+                { section: 'Actividades y excursiones', es: 'Durante la semana hicimos senderismo por los lagos de Covadonga y sacamos muchísimas fotos del paisaje verde.', en: 'During the week we went hiking around the lakes of Covadonga and took lots of photos of the green landscape.' },
+                { section: 'Un día en la playa', es: 'Un día hizo muchísimo calor, así que fuimos a la playa de Gulpiyuri, nadamos en el mar y tomamos el sol.', en: 'One day it was very hot, so we went to Gulpiyuri beach, swam in the sea and sunbathed.' },
+                { section: 'Gastronomía local', es: 'Una noche cenamos en una sidrería tradicional donde probamos la famosa fabada asturiana y varios quesos artesanales.', en: 'One night we had dinner at a traditional cider house where we tried the famous Asturian bean stew and several artisan cheeses.' },
+                { section: 'Postre y bebida', es: 'De postre pedí arroz con leche casero, que estuvo delicioso, y bebimos sidra natural escanciada por el camarero.', en: 'For dessert I ordered homemade rice pudding, which was delicious, and we drank natural cider poured from a height by the waiter.' },
+                { section: 'Compras y recuerdos', es: 'Antes de volver a casa, compré una botella de sidra y una caja de dulces típicos como recuerdo para mis padres.', en: 'Before returning home, I bought a bottle of cider and a box of typical sweets as a souvenir for my parents.' },
+                { section: 'Valoración final', es: 'En resumen, fueron unas vacaciones inolvidables porque la gente fue muy amable y desconecté por completo del estrés.', en: 'In short, it was an unforgettable holiday because the people were very kind and I completely disconnected from stress.' }
+            ]
+        },
+        {
+            id: 'tma04',
+            code: 'TMA 04',
+            title: 'Recuerdos de la infancia, vida sana y planes de futuro',
+            subtitle: 'Contrasting past & present (imperfect vs present), healthy habits, and future aspirations',
+            scenario: 'Reflect on how your life used to be when you were younger (pretérito imperfecto) compared to now, explain how you stay healthy, and share your plans for the next few years.',
+            tips: 'Use the imperfect tense (-aba / -ía) for habitual actions in childhood (cuando era joven, vivía en..., jugaba al...) and "voy a + infinitivo" or "me gustaría + infinitivo" for future plans.',
+            lines: [
+                { section: 'Infancia y recuerdos', es: 'Cuando era más joven, mi vida era muy diferente porque vivía con mis padres en una gran ciudad industrial.', en: 'When I was younger, my life was very different because I used to live with my parents in a big industrial city.' },
+                { section: 'Costumbres del pasado', es: 'De niño no teníamos internet ni teléfonos móviles, así que pasaba todas las tardes jugando al fútbol en la calle con mis vecinos.', en: 'As a child we did not have internet or mobile phones, so I used to spend every afternoon playing football in the street with my neighbours.' },
+                { section: 'Veranos de antes', es: 'Además, todos los veranos íbamos en tren a la casa de mis abuelos en el campo, donde mi abuela siempre cocinaba pasteles caseros.', en: 'Furthermore, every summer we used to go by train to my grandparents’ house in the countryside, where my grandmother always cooked homemade cakes.' },
+                { section: 'Cambio al presente', es: 'Hoy en día tengo muchas más responsabilidades laborales y familiares, pero intento mantener un estilo de vida saludable y equilibrado.', en: 'Nowadays I have many more work and family responsibilities, but I try to maintain a healthy and balanced lifestyle.' },
+                { section: 'Salud y alimentación', es: 'Para cuidar mi salud, sigo una dieta mediterránea con mucha verdura fresca, pescado azul, aceite de oliva y poca carne roja.', en: 'To look after my health, I follow a Mediterranean diet with lots of fresh vegetables, oily fish, olive oil and little red meat.' },
+                { section: 'Deporte y bienestar', es: 'También voy a nadar tres veces por semana a la piscina municipal y evito usar pantallas una hora antes de dormir.', en: 'I also go swimming three times a week at the municipal pool and I avoid using screens an hour before sleeping.' },
+                { section: 'Planes a corto plazo', es: 'De cara al futuro, cuando termine este curso de español en junio, voy a celebrar el fin de los exámenes con mi familia.', en: 'Looking to the future, when I finish this Spanish course in June, I am going to celebrate the end of the exams with my family.' },
+                { section: 'Planes de estudios', es: 'El próximo otoño pienso matricularme en el siguiente nivel de español porque quiero seguir mejorando mi fluidez oral.', en: 'Next autumn I plan to enrol in the next level of Spanish because I want to keep improving my spoken fluency.' },
+                { section: 'Viaje soñado', es: 'Además, el año que viene vamos a ahorrar dinero porque nos gustaría hacer un viaje largo por Andalucía y visitar Granada y Sevilla.', en: 'In addition, next year we are going to save money because we would like to take a long trip around Andalusia and visit Granada and Seville.' },
+                { section: 'Sueño a largo plazo', es: 'A largo plazo, cuando me jubile, me encantaría pasar los inviernos en un pueblo blanco del sur de España.', en: 'In the long term, when I retire, I would love to spend the winters in a white village in the south of Spain.' }
+            ]
+        }
+    ];
+
+    /* ==========================================================================
+       2. DEFAULT VOCABULARY BY SECCIÓN DATA
+       ========================================================================== */
+    const VOCAB_UNITS = [
+        { id: 'all', name: 'All Sections' },
+        { id: 'sec1', name: 'Sección 1: Saludos y familia' },
+        { id: 'sec2', name: 'Sección 2: Mi pueblo y rutina' },
+        { id: 'sec3', name: 'Sección 3: Tiempo libre y comida' },
+        { id: 'sec4', name: 'Sección 4: Viajes y pasado' },
+        { id: 'sec5', name: 'Sección 5: Salud, infancia y futuro' },
+        { id: 'conn', name: 'Conectores y frases TMA' }
+    ];
+
+    const DEFAULT_VOCAB = [
+        // Sección 1: Saludos, familia y trabajo
+        { id: 'v1', unit: 'sec1', category: 'Presentación', es: 'Me llamo… y vivo en…', en: 'My name is… and I live in…', example: 'Me llamo Clara y vivo en el sureste de Inglaterra.' },
+        { id: 'v2', unit: 'sec1', category: 'Carácter', es: 'trabajador / trabajadora', en: 'hard-working', example: 'Me considero una persona bastante trabajadora y organizada.' },
+        { id: 'v3', unit: 'sec1', category: 'Familia', es: 'estar casado/a · estar soltero/a', en: 'to be married · to be single', example: 'Estoy casado desde hace doce años.' },
+        { id: 'v4', unit: 'sec1', category: 'Familia', es: 'hijo único / hija única', en: 'only child', example: 'No tengo hermanos; soy hija única.' },
+        { id: 'v5', unit: 'sec1', category: 'Familia', es: 'llevarse bien con alguien', en: 'to get along well with someone', example: 'Me llevo muy bien con mis hermanos mayores.' },
+        { id: 'v6', unit: 'sec1', category: 'Trabajo', es: 'trabajar desde casa (teletrabajar)', en: 'to work from home', example: 'Tres días a la semana trabajo desde casa.' },
+        { id: 'v7', unit: 'sec1', category: 'Trabajo', es: 'estar jubilado / jubilada', en: 'to be retired', example: 'Ahora estoy jubilado y tengo más tiempo para estudiar.' },
+        { id: 'v8', unit: 'sec1', category: 'Estudios', es: 'mejorar mi fluidez', en: 'to improve my fluency', example: 'Practico en voz alta para mejorar mi fluidez en español.' },
+
+        // Sección 2: Mi pueblo, clima y rutina
+        { id: 'v9', unit: 'sec2', category: 'Entorno', es: 'el casco antiguo / histórico', en: 'the historic old town', example: 'En el casco antiguo hay calles estrechas muy bonitas.' },
+        { id: 'v10', unit: 'sec2', category: 'Entorno', es: 'el paseo marítimo', en: 'the seafront promenade', example: 'Todas las mañanas camino por el paseo marítimo.' },
+        { id: 'v11', unit: 'sec2', category: 'Servicios', es: 'el polideportivo municipal', en: 'the local sports centre', example: 'Voy al polideportivo municipal los martes y jueves.' },
+        { id: 'v12', unit: 'sec2', category: 'Clima', es: 'hace buen / mal tiempo', en: 'the weather is good / bad', example: 'Cuando hace buen tiempo, desayunamos en el jardín.' },
+        { id: 'v13', unit: 'sec2', category: 'Clima', es: 'llueve a menudo', en: 'it rains often', example: 'En otoño hace viento y llueve a menudo.' },
+        { id: 'v14', unit: 'sec2', category: 'Rutina', es: 'despertarse temprano', en: 'to wake up early', example: 'Entre semana me despierto temprano, a las seis y media.' },
+        { id: 'v15', unit: 'sec2', category: 'Rutina', es: 'acostarse tarde', en: 'to go to bed late', example: 'Los sábados me acuesto más tarde que de costumbre.' },
+        { id: 'v16', unit: 'sec2', category: 'Frecuencia', es: 'de vez en cuando', en: 'from time to time / once in a while', example: 'De vez en cuando cenamos en un restaurante mexicano.' },
+
+        // Sección 3: Tiempo libre, compras y comida
+        { id: 'v17', unit: 'sec3', category: 'Ocio', es: 'quedar con amigos', en: 'to meet up with friends', example: 'Los viernes por la tarde suelo quedar con mis amigos.' },
+        { id: 'v18', unit: 'sec3', category: 'Ocio', es: 'hacer senderismo', en: 'to go hiking / rambling', example: 'Nos encanta hacer senderismo por el campo.' },
+        { id: 'v19', unit: 'sec3', category: 'Gastronomía', es: 'el primer plato · el segundo plato', en: 'the starter · the main course', example: 'De primer plato quiero sopa de marisco.' },
+        { id: 'v20', unit: 'sec3', category: 'Gastronomía', es: 'la comida casera', en: 'home-cooked food', example: 'Prefiero la comida casera a la comida rápida.' },
+        { id: 'v21', unit: 'sec3', category: 'Restaurante', es: 'pedir la cuenta', en: 'to ask for the bill', example: 'Perdone, ¿nos trae la cuenta, por favor?' },
+        { id: 'v22', unit: 'sec3', category: 'Restaurante', es: 'estar riquísimo / delicioso', en: 'to be delicious', example: 'El pescado a la plancha estuvo riquísimo.' },
+        { id: 'v23', unit: 'sec3', category: 'Compras', es: 'el mercado al aire libre', en: 'the open-air market', example: 'Compro verdura fresca en el mercado al aire libre.' },
+
+        // Sección 4: Viajes y experiencias en el pasado
+        { id: 'v24', unit: 'sec4', category: 'Viajes', es: 'alojarse en un hotel / una casa rural', en: 'to stay in a hotel / rural house', example: 'Nos alojamos en una casa rural muy acogedora.' },
+        { id: 'v25', unit: 'sec4', category: 'Viajes', es: 'alquilar un coche', en: 'to rent / hire a car', example: 'En el aeropuerto alquilamos un coche por una semana.' },
+        { id: 'v26', unit: 'sec4', category: 'Pasado', es: 'el verano pasado / el año pasado', en: 'last summer / last year', example: 'El verano pasado viajé al norte de España.' },
+        { id: 'v27', unit: 'sec4', category: 'Pasado', es: 'hace dos años', en: 'two years ago', example: 'Empecé a estudiar español hace dos años.' },
+        { id: 'v28', unit: 'sec4', category: 'Pasado', es: 'lo pasé fenomenal', en: 'I had a wonderful time', example: 'Fue un viaje increíble y lo pasé fenomenal.' },
+        { id: 'v29', unit: 'sec4', category: 'Pasado', es: 'desconectar de la rutina', en: 'to unplug / disconnect from routine', example: 'Necesitaba unos días libres para desconectar de la rutina.' },
+        { id: 'v30', unit: 'sec4', category: 'Recuerdos', es: 'comprar recuerdos', en: 'to buy souvenirs', example: 'Compré varios recuerdos para mi familia.' },
+
+        // Sección 5: Salud, infancia y futuro
+        { id: 'v31', unit: 'sec5', category: 'Infancia', es: 'cuando era joven / de niño/a', en: 'when I was young / as a child', example: 'Cuando era joven, vivía cerca de mis abuelos.' },
+        { id: 'v32', unit: 'sec5', category: 'Salud', es: 'llevar una vida sana', en: 'to lead a healthy life', example: 'Intento llevar una vida sana y dormir ocho horas.' },
+        { id: 'v33', unit: 'sec5', category: 'Salud', es: 'mantenerse en forma', en: 'to keep fit', example: 'Camino diez mil pasos al día para mantenerme en forma.' },
+        { id: 'v34', unit: 'sec5', category: 'Salud', es: 'evitar el estrés', en: 'to avoid stress', example: 'Practico yoga por las mañanas para evitar el estrés.' },
+        { id: 'v35', unit: 'sec5', category: 'Futuro', es: 'voy a + infinitivo', en: 'I am going to + verb', example: 'Este verano voy a visitar a unos amigos en Madrid.' },
+        { id: 'v36', unit: 'sec5', category: 'Futuro', es: 'me gustaría / me encantaría', en: 'I would like / I would love to', example: 'En el futuro me encantaría recorrer América Latina.' },
+        { id: 'v37', unit: 'sec5', category: 'Futuro', es: 'tener la intención de…', en: 'to intend to / plan to…', example: 'Tengo la intención de continuar con el nivel intermedio.' },
+
+        // Conectores y frases útiles para TMAs
+        { id: 'v38', unit: 'conn', category: 'Conector', es: 'Sin embargo / No obstante', en: 'However / Nevertheless', example: 'Mi pueblo es pequeño; sin embargo, tiene muchos servicios.' },
+        { id: 'v39', unit: 'conn', category: 'Conector', es: 'Además / Por otra parte', en: 'Furthermore / On the other hand', example: 'Además, el transporte público funciona muy bien.' },
+        { id: 'v40', unit: 'conn', category: 'Opinión', es: 'Lo que más me gusta es…', en: 'What I like most is…', example: 'Lo que más me gusta de mi barrio es la tranquilidad.' },
+        { id: 'v41', unit: 'conn', category: 'Opinión', es: 'Para mí, es importante…', en: 'For me, it is important to…', example: 'Para mí, es importante practicar un poco cada día.' },
+        { id: 'v42', unit: 'conn', category: 'Conclusión', es: 'En resumen / Para terminar', en: 'In summary / To finish', example: 'En resumen, estoy muy contento con mi progreso este año.' }
+    ];
+
+    /* ==========================================================================
+       3. STATE MANAGEMENT & LOCAL STORAGE
+       ========================================================================== */
+    const STORAGE_KEYS = {
+        TMAS: 'l106_tma_scripts_v1',
+        CUSTOM_VOCAB: 'l106_custom_vocab_v1',
+        BLOCK_EN: 'l106_block_en_v1',
+        BLOCK_ES: 'l106_block_es_v1',
+        SPEED: 'l106_speech_speed_v1',
+        VOICE_URI: 'l106_voice_uri_v1',
+        HIDE_ENGLISH: 'l106_hide_en_v1'
+    };
+
+    const state = {
+        currentView: 'practice',
+        currentTmaId: 'tma01',
+        currentVocabUnit: 'all',
+        vocabSearchQuery: '',
+        editMode: false,
+        hideEnglish: localStorage.getItem(STORAGE_KEYS.HIDE_ENGLISH) === 'true',
+        speechRate: parseFloat(localStorage.getItem(STORAGE_KEYS.SPEED)) || 0.90,
+        selectedVoiceURI: localStorage.getItem(STORAGE_KEYS.VOICE_URI) || '',
+        voices: [],
+        isPlaying: false,
+        isPaused: false,
+        playQueue: [],
+        currentQueueIndex: -1,
+        liveTranslationEnabled: false,
+        tmas: loadTmasFromStorage(),
+        customVocab: loadCustomVocabFromStorage()
+    };
+
+    function loadTmasFromStorage() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEYS.TMAS);
+            if (!raw) return JSON.parse(JSON.stringify(DEFAULT_TMAS));
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length === DEFAULT_TMAS.length) {
+                return parsed;
+            }
+        } catch (e) {
+            console.warn('Could not read saved TMAs, using defaults.', e);
+        }
+        return JSON.parse(JSON.stringify(DEFAULT_TMAS));
+    }
+
+    function saveTmasToStorage() {
+        try {
+            localStorage.setItem(STORAGE_KEYS.TMAS, JSON.stringify(state.tmas));
+        } catch (e) {
+            console.warn('Could not save TMAs to localStorage.', e);
+        }
+    }
+
+    function loadCustomVocabFromStorage() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEYS.CUSTOM_VOCAB);
+            if (!raw) return [];
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveCustomVocabToStorage() {
+        try {
+            localStorage.setItem(STORAGE_KEYS.CUSTOM_VOCAB, JSON.stringify(state.customVocab));
+        } catch (e) {
+            console.warn('Could not save custom vocab.', e);
+        }
+    }
+
+    /* ==========================================================================
+       4. WEB SPEECH API (SPANISH TEXT-TO-SPEECH ENGINE)
+       ========================================================================== */
+    const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
+
+    function populateVoices() {
+        if (!synth) {
+            updateAudioStatus('Speech synthesis not supported in this browser');
+            return;
+        }
+        const allVoices = synth.getVoices() || [];
+        // Filter Spanish voices first; if none exist on the device, keep all voices so dropdown isn't empty
+        const spanishVoices = allVoices.filter(v => /^es([-_]|$)/i.test(v.lang) || /spanish|español/i.test(v.name));
+        state.voices = spanishVoices.length > 0 ? spanishVoices : allVoices;
+
+        // Sort Peninsular Spanish (es-ES) and Mexican Spanish (es-MX) to top
+        state.voices.sort((a, b) => {
+            const aEs = a.lang.toLowerCase().includes('es-es') ? 0 : (a.lang.toLowerCase().startsWith('es') ? 1 : 2);
+            const bEs = b.lang.toLowerCase().includes('es-es') ? 0 : (b.lang.toLowerCase().startsWith('es') ? 1 : 2);
+            if (aEs !== bEs) return aEs - bEs;
+            return a.name.localeCompare(b.name);
+        });
+
+        // Pick default voice if none stored or stored voice not present
+        if (!state.selectedVoiceURI || !state.voices.some(v => v.voiceURI === state.selectedVoiceURI)) {
+            if (state.voices.length > 0) {
+                state.selectedVoiceURI = state.voices[0].voiceURI;
+            }
+        }
+
+        syncVoiceSelectDropdowns();
+    }
+
+    function syncVoiceSelectDropdowns() {
+        const selects = document.querySelectorAll('.voice-select');
+        selects.forEach(select => {
+            select.innerHTML = '';
+            if (state.voices.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = 'Default Spanish Voice (es-ES)';
+                select.appendChild(opt);
+                return;
+            }
+            state.voices.forEach(voice => {
+                const opt = document.createElement('option');
+                opt.value = voice.voiceURI;
+                opt.textContent = `${voice.name} (${voice.lang})`;
+                if (voice.voiceURI === state.selectedVoiceURI) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+        });
+    }
+
+    if (synth) {
+        populateVoices();
+        if (typeof synth.onvoiceschanged !== 'undefined') {
+            synth.onvoiceschanged = populateVoices;
+        }
+    }
+
+    function stopSpeech() {
+        if (synth) {
+            synth.cancel();
+        }
+        state.isPlaying = false;
+        state.isPaused = false;
+        state.playQueue = [];
+        state.currentQueueIndex = -1;
+        clearSpeakingHighlights();
+        updateStopButtons(true);
+        updateAudioStatus('Ready to listen');
+    }
+
+    function clearSpeakingHighlights() {
+        document.querySelectorAll('.speaking-active').forEach(el => {
+            el.classList.remove('speaking-active');
+        });
+    }
+
+    function updateStopButtons(disabled) {
+        document.querySelectorAll('[data-action="stop"]').forEach(btn => {
+            btn.disabled = disabled;
+        });
+    }
+
+    function updateAudioStatus(message) {
+        document.querySelectorAll('.audio-status').forEach(el => {
+            el.textContent = message;
+        });
+        const live = document.getElementById('live-status');
+        if (live) live.textContent = message;
+    }
+
+    function speakSingleText(text, highlightEl = null, onEndCallback = null) {
+        if (!synth) {
+            showToast('Your browser does not support spoken audio.');
+            return;
+        }
+        const cleaned = (text || '').trim();
+        if (!cleaned) {
+            showToast('No Spanish text selected to read.');
+            return;
+        }
+
+        synth.cancel();
+        clearSpeakingHighlights();
+
+        const utterance = new SpeechSynthesisUtterance(cleaned);
+        utterance.lang = 'es-ES';
+        utterance.rate = state.speechRate;
+
+        const chosenVoice = state.voices.find(v => v.voiceURI === state.selectedVoiceURI);
+        if (chosenVoice) {
+            utterance.voice = chosenVoice;
+            utterance.lang = chosenVoice.lang;
+        }
+
+        utterance.onstart = () => {
+            state.isPlaying = true;
+            updateStopButtons(false);
+            if (highlightEl) {
+                highlightEl.classList.add('speaking-active');
+                highlightEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            updateAudioStatus(`Speaking (${state.speechRate.toFixed(2)}×)…`);
+        };
+
+        utterance.onend = () => {
+            if (highlightEl) highlightEl.classList.remove('speaking-active');
+            if (onEndCallback) {
+                onEndCallback();
+            } else {
+                state.isPlaying = false;
+                updateStopButtons(true);
+                updateAudioStatus('Ready to listen');
+            }
+        };
+
+        utterance.onerror = () => {
+            if (highlightEl) highlightEl.classList.remove('speaking-active');
+            state.isPlaying = false;
+            updateStopButtons(true);
+            updateAudioStatus('Ready to listen');
+        };
+
+        synth.speak(utterance);
+    }
+
+    function playSequenceQueue(items) {
+        if (!items || items.length === 0) return;
+        stopSpeech();
+        state.playQueue = items;
+        state.currentQueueIndex = 0;
+
+        function playNext() {
+            if (state.currentQueueIndex < 0 || state.currentQueueIndex >= state.playQueue.length) {
+                stopSpeech();
+                updateAudioStatus('Finished playing');
+                return;
+            }
+            const item = state.playQueue[state.currentQueueIndex];
+            updateAudioStatus(`Playing line ${state.currentQueueIndex + 1} of ${state.playQueue.length} (${state.speechRate.toFixed(2)}×)`);
+            speakSingleText(item.text, item.element, () => {
+                state.currentQueueIndex++;
+                playNext();
+            });
+        }
+
+        playNext();
+    }
+
+    function setSpeechSpeed(rate) {
+        const clamped = Math.max(0.30, Math.min(1.20, parseFloat(rate) || 0.90));
+        state.speechRate = Math.round(clamped * 100) / 100;
+        localStorage.setItem(STORAGE_KEYS.SPEED, String(state.speechRate));
+
+        // Update all range sliders & outputs
+        document.querySelectorAll('.speech-speed-range').forEach(slider => {
+            slider.value = state.speechRate;
+            slider.setAttribute('aria-valuetext', `${state.speechRate.toFixed(2)} times normal speed`);
+        });
+        document.querySelectorAll('.speed-output, #block-speed-value').forEach(out => {
+            out.textContent = `${state.speechRate.toFixed(2)}×`;
+        });
+
+        // Highlight active preset buttons
+        document.querySelectorAll('.speed-preset').forEach(btn => {
+            const btnRate = parseFloat(btn.getAttribute('data-rate'));
+            const isMatch = Math.abs(btnRate - state.speechRate) < 0.02;
+            if (isMatch) {
+                btn.className = 'speed-preset px-2.5 py-1 rounded-md font-bold transition bg-brand text-white shadow-2xs';
+            } else {
+                btn.className = 'speed-preset px-2.5 py-1 rounded-md font-semibold transition text-slate-600 hover:bg-slate-200/70';
+            }
+        });
+    }
+
+    /* ==========================================================================
+       5. RENDER VIEW 1: TMA 01–04 PRACTICE
+       ========================================================================== */
+    function renderTmaTabs() {
+        const tablist = document.querySelector('.tma-switch');
+        if (!tablist) return;
+        tablist.innerHTML = '';
+
+        state.tmas.forEach(tma => {
+            const isSelected = tma.id === state.currentTmaId;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('role', 'tab');
+            btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+            btn.dataset.tmaId = tma.id;
+            btn.className = isSelected
+                ? 'px-4 py-2.5 rounded-xl font-bold text-sm transition shadow-sm bg-brand text-white border-2 border-brand flex items-center gap-2'
+                : 'px-4 py-2.5 rounded-xl font-semibold text-sm transition bg-white text-slate-700 border border-slate-300 hover:border-brand hover:text-brand flex items-center gap-2';
+            btn.innerHTML = `
+                <span class="px-2 py-0.5 rounded-md text-xs font-extrabold ${isSelected ? 'bg-brand-gold text-brand-dark' : 'bg-slate-100 text-slate-600'}">${tma.code}</span>
+                <span class="hidden sm:inline">${tma.title.split(',')[0]}</span>
+            `;
+            btn.addEventListener('click', () => {
+                stopSpeech();
+                state.currentTmaId = tma.id;
+                renderTmaTabs();
+                renderCurrentTmaContent();
+            });
+            tablist.appendChild(btn);
+        });
+    }
+
+    function renderCurrentTmaContent() {
+        const container = document.getElementById('tma-content');
+        if (!container) return;
+        const tma = state.tmas.find(item => item.id === state.currentTmaId) || state.tmas[0];
+
+        container.innerHTML = `
+            <article class="assignment-card bg-white rounded-2xl shadow-sm border border-slate-200/90 overflow-hidden">
+                <!-- TMA Header & Scenario Brief -->
+                <div class="p-5 sm:p-6 bg-gradient-to-r from-brand-soft/60 to-white border-b border-slate-200/80 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-brand text-brand-gold">
+                            ${tma.code} · Speaking & Writing Script
+                        </span>
+                        <span class="text-xs font-medium text-slate-500">${tma.lines.length} sentences · Click any line to rehearse</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-brand-dark">${tma.title}</h2>
+                    <p class="text-sm text-slate-600">${tma.subtitle}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                        <div class="bg-white/90 rounded-xl p-3.5 border border-slate-200/80 text-xs sm:text-sm text-slate-700">
+                            <strong class="text-brand-dark block mb-0.5">📋 Task prompt:</strong>
+                            ${tma.scenario}
+                        </div>
+                        <div class="bg-amber-50/80 rounded-xl p-3.5 border border-amber-200/80 text-xs sm:text-sm text-amber-950">
+                            <strong class="text-amber-900 block mb-0.5">💡 Tutor tip:</strong>
+                            ${tma.tips}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TMA Audio Player & Customization Toolbar -->
+                <div class="p-4 sm:p-5 bg-slate-50 border-b border-slate-200/90 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <!-- Play All / Stop Controls -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" id="tma-play-all-btn" class="px-4 py-2.5 rounded-xl bg-brand text-white text-sm font-bold hover:bg-brand-light transition shadow-sm flex items-center gap-2">
+                                ▶ Listen to full ${tma.code}
+                            </button>
+                            <button type="button" class="action px-3.5 py-2.5 rounded-xl bg-rose-600 text-white text-sm font-semibold hover:bg-rose-700 disabled:opacity-40 disabled:pointer-events-none transition" data-action="stop" disabled>
+                                ■ Stop
+                            </button>
+                            <span class="audio-status text-xs font-semibold px-3 py-1.5 rounded-full bg-white border border-slate-200 text-brand-dark" role="status">Ready to listen</span>
+                        </div>
+
+                        <!-- Study Controls: Hide English / Adapt for Yourself / Reset -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" id="toggle-english-btn" class="px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition ${state.hideEnglish ? 'bg-brand-gold text-brand-dark border-brand-goldDark' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'}">
+                                ${state.hideEnglish ? '👁 Show English' : '🙈 Hide English (Self-test)'}
+                            </button>
+                            <button type="button" id="toggle-edit-tma-btn" class="px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition ${state.editMode ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm' : 'bg-white text-brand-dark border-brand/40 hover:bg-brand-soft/50'}">
+                                ${state.editMode ? '✓ Finish adapting' : '✎ Adapt for yourself'}
+                            </button>
+                            <button type="button" id="reset-tma-btn" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-600 hover:text-rose-700 hover:border-rose-300 text-xs font-semibold transition" title="Restore original example sentences for ${tma.code}">
+                                ↺ Reset ${tma.code}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Speed & Voice Controls Row -->
+                    <div class="pt-3 border-t border-slate-200/80 flex flex-col lg:flex-row lg:items-center justify-between gap-4 text-xs">
+                        <div class="speed-control flex flex-wrap items-center gap-3">
+                            <label for="tma-speed-range" class="font-bold text-slate-700 min-w-[90px]">
+                                Speed <output class="speed-output text-brand font-extrabold ml-1">${state.speechRate.toFixed(2)}×</output>
+                            </label>
+                            <input id="tma-speed-range" class="speech-speed-range w-32 sm:w-40" type="range" min="0.30" max="1.20" step="0.05" value="${state.speechRate}">
+                            <div class="speed-presets inline-flex rounded-lg bg-white p-0.5 border border-slate-200" aria-label="Speech speed presets">
+                                <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.3">0.30×</button>
+                                <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.5">0.50×</button>
+                                <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.65">0.65×</button>
+                                <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="0.9">0.90×</button>
+                                <button type="button" class="speed-preset px-2.5 py-1 rounded-md font-semibold transition" data-action="set-speed" data-rate="1.2">1.20×</button>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <label class="flex items-center gap-2 font-bold text-slate-700">
+                                Voice
+                                <select class="voice-select rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-800 outline-none focus:border-brand"></select>
+                            </label>
+                            <button type="button" class="action px-3 py-1.5 rounded-lg bg-brand-gold/30 hover:bg-brand-gold/50 text-brand-dark font-bold transition" data-action="test-voice">
+                                Test
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Mode Banner Notice -->
+                ${state.editMode ? `
+                <div class="bg-emerald-50 border-b border-emerald-200 px-5 py-3 text-xs sm:text-sm text-emerald-900 flex flex-wrap items-center justify-between gap-2">
+                    <span><strong>Adaptation mode active:</strong> Edit any Spanish or English line below to match your own personal details. Changes save automatically in your browser.</span>
+                    <button type="button" id="add-tma-line-btn" class="px-3 py-1.5 rounded-lg bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 transition">＋ Add new line</button>
+                </div>
+                ` : ''}
+
+                <!-- Bilingual Sentence List -->
+                <div class="divide-y divide-slate-200/80" id="tma-lines-list">
+                    ${tma.lines.map((line, idx) => renderTmaLineHTML(line, idx)).join('')}
+                </div>
+            </article>
+        `;
+
+        // Sync voice dropdowns & speed preset highlights
+        syncVoiceSelectDropdowns();
+        setSpeechSpeed(state.speechRate);
+
+        // Attach event listeners inside TMA card
+        const playAllBtn = document.getElementById('tma-play-all-btn');
+        if (playAllBtn) {
+            playAllBtn.addEventListener('click', () => {
+                const rowEls = container.querySelectorAll('.sentence-row');
+                const queue = tma.lines.map((line, i) => ({
+                    text: line.es,
+                    element: rowEls[i]
+                }));
+                playSequenceQueue(queue);
+            });
+        }
+
+        const speedSlider = document.getElementById('tma-speed-range');
+        if (speedSlider) {
+            speedSlider.addEventListener('input', e => setSpeechSpeed(e.target.value));
+        }
+
+        const toggleEngBtn = document.getElementById('toggle-english-btn');
+        if (toggleEngBtn) {
+            toggleEngBtn.addEventListener('click', () => {
+                state.hideEnglish = !state.hideEnglish;
+                localStorage.setItem(STORAGE_KEYS.HIDE_ENGLISH, String(state.hideEnglish));
+                renderCurrentTmaContent();
+            });
+        }
+
+        const toggleEditBtn = document.getElementById('toggle-edit-tma-btn');
+        if (toggleEditBtn) {
+            toggleEditBtn.addEventListener('click', () => {
+                state.editMode = !state.editMode;
+                renderCurrentTmaContent();
+                if (!state.editMode) {
+                    showToast('Your adapted script is saved.');
+                }
+            });
+        }
+
+        const resetBtn = document.getElementById('reset-tma-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                const defaultMatch = DEFAULT_TMAS.find(d => d.id === tma.id);
+                if (defaultMatch) {
+                    const targetIdx = state.tmas.findIndex(item => item.id === tma.id);
+                    state.tmas[targetIdx] = JSON.parse(JSON.stringify(defaultMatch));
+                    saveTmasToStorage();
+                    renderCurrentTmaContent();
+                    showToast(`${tma.code} restored to original example script.`);
+                }
+            });
+        }
+
+        const addLineBtn = document.getElementById('add-tma-line-btn');
+        if (addLineBtn) {
+            addLineBtn.addEventListener('click', () => {
+                tma.lines.push({
+                    section: 'Nuevo punto',
+                    es: 'Escribe tu frase en español aquí.',
+                    en: 'Write your English translation here.'
+                });
+                saveTmasToStorage();
+                renderCurrentTmaContent();
+            });
+        }
+
+        // Line-level listeners (Play single line, Edit inputs, Delete line)
+        container.querySelectorAll('.play-line-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.dataset.lineIdx, 10);
+                const rowEl = btn.closest('.sentence-row');
+                const lineObj = tma.lines[idx];
+                if (lineObj) {
+                    speakSingleText(lineObj.es, rowEl);
+                }
+            });
+        });
+
+        if (state.editMode) {
+            container.querySelectorAll('.edit-line-es').forEach(textarea => {
+                textarea.addEventListener('input', e => {
+                    const idx = parseInt(textarea.dataset.lineIdx, 10);
+                    if (tma.lines[idx]) {
+                        tma.lines[idx].es = e.target.value;
+                        saveTmasToStorage();
+                    }
+                });
+            });
+            container.querySelectorAll('.edit-line-en').forEach(textarea => {
+                textarea.addEventListener('input', e => {
+                    const idx = parseInt(textarea.dataset.lineIdx, 10);
+                    if (tma.lines[idx]) {
+                        tma.lines[idx].en = e.target.value;
+                        saveTmasToStorage();
+                    }
+                });
+            });
+            container.querySelectorAll('.edit-line-sec').forEach(input => {
+                input.addEventListener('input', e => {
+                    const idx = parseInt(input.dataset.lineIdx, 10);
+                    if (tma.lines[idx]) {
+                        tma.lines[idx].section = e.target.value;
+                        saveTmasToStorage();
+                    }
+                });
+            });
+            container.querySelectorAll('.delete-line-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.lineIdx, 10);
+                    if (tma.lines.length <= 1) {
+                        showToast('Keep at least one sentence in the script.');
+                        return;
+                    }
+                    tma.lines.splice(idx, 1);
+                    saveTmasToStorage();
+                    renderCurrentTmaContent();
+                });
+            });
+        }
+    }
+
+    function renderTmaLineHTML(line, idx) {
+        if (state.editMode) {
+            return `
+                <div class="sentence-row p-4 sm:p-5 bg-white transition flex flex-col gap-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-brand text-white text-xs font-bold flex items-center justify-center">${idx + 1}</span>
+                            <input type="text" data-line-idx="${idx}" value="${escapeHtml(line.section)}" class="edit-line-sec rounded-lg border border-slate-300 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-brand-dark focus:border-brand outline-none" aria-label="Section label">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" data-line-idx="${idx}" class="play-line-btn px-3 py-1 rounded-lg bg-brand-soft text-brand-dark hover:bg-brand hover:text-white text-xs font-bold transition">▶ Test audio</button>
+                            <button type="button" data-line-idx="${idx}" class="delete-line-btn px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-semibold transition">Remove</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-brand-dark mb-1">Spanish (Español)</label>
+                            <textarea data-line-idx="${idx}" rows="2" lang="es" class="edit-line-es w-full rounded-xl border border-brand/40 bg-brand-soft/10 p-2.5 text-sm font-medium text-slate-900 focus:bg-white focus:border-brand outline-none">${escapeHtml(line.es)}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">English meaning</label>
+                            <textarea data-line-idx="${idx}" rows="2" class="edit-line-en w-full rounded-xl border border-slate-300 p-2.5 text-sm text-slate-700 focus:border-brand outline-none">${escapeHtml(line.en)}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="sentence-row p-4 sm:p-5 hover:bg-slate-50/90 transition flex flex-col md:flex-row md:items-center gap-3 sm:gap-5 group">
+                <!-- Left Play Button & Section Tag -->
+                <div class="flex items-center gap-3 md:w-48 shrink-0">
+                    <button type="button" data-line-idx="${idx}" class="play-line-btn w-10 h-10 rounded-xl bg-brand-soft text-brand-dark group-hover:bg-brand group-hover:text-white font-bold flex items-center justify-center transition shadow-2xs shrink-0" aria-label="Listen to sentence ${idx + 1} in Spanish">
+                        ▶
+                    </button>
+                    <div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Line ${idx + 1}</span>
+                        <span class="text-xs font-bold text-brand-light">${escapeHtml(line.section)}</span>
+                    </div>
+                </div>
+
+                <!-- Bilingual Columns -->
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6 items-baseline">
+                    <p lang="es" class="text-base sm:text-[17px] font-semibold text-slate-900 leading-relaxed cursor-pointer" onclick="this.closest('.sentence-row').querySelector('.play-line-btn').click()" title="Click to hear in Spanish">
+                        ${escapeHtml(line.es)}
+                    </p>
+                    <p class="text-sm sm:text-[15px] text-slate-600 leading-relaxed ${state.hideEnglish ? 'blur-xs select-none hover:blur-none transition duration-200 cursor-pointer' : ''}" title="${state.hideEnglish ? 'Hover or click Show English to reveal' : ''}">
+                        ${escapeHtml(line.en)}
+                    </p>
+                </div>
+            </div>
+        `;
+    }
+
+    /* ==========================================================================
+       6. RENDER VIEW 2: VOCABULARY BY SECCIÓN
+       ========================================================================== */
+    function renderVocabUnitTabs() {
+        const unitSwitch = document.querySelector('.unit-switch');
+        const customSelect = document.getElementById('custom-vocab-unit');
+        if (!unitSwitch) return;
+
+        unitSwitch.innerHTML = '';
+        if (customSelect && customSelect.options.length === 0) {
+            VOCAB_UNITS.filter(u => u.id !== 'all').forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.id;
+                opt.textContent = u.name;
+                customSelect.appendChild(opt);
+            });
+        }
+
+        VOCAB_UNITS.forEach(unit => {
+            const isActive = unit.id === state.currentVocabUnit;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('role', 'tab');
+            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            btn.className = isActive
+                ? 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-brand text-white shadow-2xs transition'
+                : 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+            btn.textContent = unit.name;
+            btn.addEventListener('click', () => {
+                state.currentVocabUnit = unit.id;
+                renderVocabUnitTabs();
+                renderVocabList();
+            });
+            unitSwitch.appendChild(btn);
+        });
+    }
+
+    function renderVocabList() {
+        const container = document.getElementById('vocab-content');
+        if (!container) return;
+
+        const combinedVocab = [...state.customVocab, ...DEFAULT_VOCAB];
+        const query = state.vocabSearchQuery.trim().toLowerCase();
+
+        const filtered = combinedVocab.filter(item => {
+            const matchesUnit = state.currentVocabUnit === 'all' || item.unit === state.currentVocabUnit;
+            if (!matchesUnit) return false;
+            if (!query) return true;
+            return (
+                item.es.toLowerCase().includes(query) ||
+                item.en.toLowerCase().includes(query) ||
+                (item.example && item.example.toLowerCase().includes(query)) ||
+                (item.category && item.category.toLowerCase().includes(query))
+            );
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 space-y-2">
+                    <p class="text-base font-bold text-slate-700">No matching vocabulary found</p>
+                    <p class="text-sm text-slate-500">Try clearing the search box or switching to "All Sections".</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                ${filtered.map(item => {
+                    const unitObj = VOCAB_UNITS.find(u => u.id === item.unit);
+                    const unitBadge = unitObj ? unitObj.name.split(':')[0] : 'Curso';
+                    return `
+                        <article class="vocab-card bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/90 hover:border-brand/50 transition flex flex-col justify-between gap-3">
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-brand-soft text-brand-dark">
+                                        ${escapeHtml(unitBadge)} · ${escapeHtml(item.category || 'Vocabulario')}
+                                    </span>
+                                    ${item.isCustom ? `
+                                        <button type="button" data-custom-id="${item.id}" class="delete-custom-vocab text-xs text-rose-600 hover:underline font-medium">Remove</button>
+                                    ` : ''}
+                                </div>
+                                <div class="flex items-start justify-between gap-3 pt-1">
+                                    <div>
+                                        <h3 lang="es" class="text-lg font-extrabold text-brand-dark leading-snug">${escapeHtml(item.es)}</h3>
+                                        <p class="text-sm font-medium text-slate-600 mt-0.5">${escapeHtml(item.en)}</p>
+                                    </div>
+                                    <button type="button" data-speak-es="${escapeHtml(item.es)}" class="vocab-speak-btn w-10 h-10 rounded-xl bg-brand text-brand-gold hover:bg-brand-light font-bold flex items-center justify-center shrink-0 shadow-xs transition" aria-label="Listen to ${escapeHtml(item.es)}">
+                                        🔊
+                                    </button>
+                                </div>
+                            </div>
+                            ${item.example ? `
+                                <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs text-slate-600 bg-slate-50/70 -mx-4 -mb-4 sm:-mx-5 sm:-mb-5 p-3.5 rounded-b-2xl">
+                                    <p lang="es" class="italic leading-relaxed"><strong class="not-italic text-brand-dark">Ej:</strong> "${escapeHtml(item.example)}"</p>
+                                    <button type="button" data-speak-es="${escapeHtml(item.example)}" class="vocab-speak-btn px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-brand text-brand-dark font-bold shrink-0 transition" title="Listen to example sentence">
+                                        ▶ Ej.
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </article>
+                    `;
+                }).join('')}
+            </div>
+        `;
+
+        container.querySelectorAll('.vocab-speak-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const phrase = btn.getAttribute('data-speak-es');
+                const card = btn.closest('.vocab-card');
+                speakSingleText(phrase, card);
+            });
+        });
+
+        container.querySelectorAll('.delete-custom-vocab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-custom-id');
+                state.customVocab = state.customVocab.filter(v => v.id !== id);
+                saveCustomVocabToStorage();
+                renderVocabList();
+                showToast('Custom vocabulary phrase removed.');
+            });
+        });
+    }
+
+    /* ==========================================================================
+       7. VIEW 3: TEXT PRACTICE & FREE TRANSLATION ENGINE
+       ========================================================================== */
+    function initBlockPracticeView() {
+        const enBox = document.getElementById('block-english');
+        const esBox = document.getElementById('block-spanish');
+        const dirSelect = document.getElementById('block-direction');
+        const speedRange = document.getElementById('block-speed-range');
+
+        if (!enBox || !esBox) return;
+
+        // Load saved text or helpful initial starter example
+        const savedEn = localStorage.getItem(STORAGE_KEYS.BLOCK_EN);
+        const savedEs = localStorage.getItem(STORAGE_KEYS.BLOCK_ES);
+
+        enBox.value = savedEn !== null ? savedEn : 'Hello! On Saturdays I usually get up at eight o\'clock and go to the local market to buy fresh fruit. In the afternoon I study Spanish for two hours.';
+        esBox.value = savedEs !== null ? savedEs : '¡Hola! Los sábados suelo levantarme a las ocho y voy al mercado local para comprar fruta fresca. Por la tarde estudio español durante dos horas.';
+
+        let debounceTimer = null;
+
+        function scheduleLiveTranslation(sourceLang) {
+            if (!state.liveTranslationEnabled) return;
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                performBlockTranslation(sourceLang);
+            }, 650);
+        }
+
+        enBox.addEventListener('input', () => {
+            localStorage.setItem(STORAGE_KEYS.BLOCK_EN, enBox.value);
+            if (dirSelect.value === 'en-es') {
+                scheduleLiveTranslation('en-es');
+            }
+        });
+
+        esBox.addEventListener('input', () => {
+            localStorage.setItem(STORAGE_KEYS.BLOCK_ES, esBox.value);
+            if (dirSelect.value === 'es-en') {
+                scheduleLiveTranslation('es-en');
+            }
+        });
+
+        if (speedRange) {
+            speedRange.addEventListener('input', e => setSpeechSpeed(e.target.value));
+        }
+    }
+
+    async function performBlockTranslation(overrideDirection = null) {
+        const dirSelect = document.getElementById('block-direction');
+        const enBox = document.getElementById('block-english');
+        const esBox = document.getElementById('block-spanish');
+        const statusText = document.getElementById('block-status-text');
+
+        const direction = overrideDirection || (dirSelect ? dirSelect.value : 'en-es');
+        const [sourceLang, targetLang] = direction.split('-');
+        const sourceBox = sourceLang === 'en' ? enBox : esBox;
+        const targetBox = targetLang === 'es' ? esBox : enBox;
+
+        const textToTranslate = (sourceBox.value || '').trim();
+        if (!textToTranslate) {
+            if (statusText) statusText.textContent = 'Please enter some text in the source box first.';
+            return;
+        }
+
+        if (statusText) statusText.textContent = `Translating (${sourceLang.toUpperCase()} → ${targetLang.toUpperCase()})…`;
+
+        // 1. Try Chrome built-in On-Device Translator API first if available
+        try {
+            const TranslatorAPI = window.Translator || (window.translation && window.translation.createTranslator);
+            if (window.Translator && typeof window.Translator.create === 'function') {
+                const translator = await window.Translator.create({
+                    sourceLanguage: sourceLang,
+                    targetLanguage: targetLang
+                });
+                const result = await translator.translate(textToTranslate);
+                if (result) {
+                    targetBox.value = result;
+                    saveBlockBoxes();
+                    if (statusText) statusText.textContent = 'Translated using browser on-device language pack.';
+                    return;
+                }
+            }
+        } catch (chromeErr) {
+            // Fall through to free web translation service
+        }
+
+        // 2. Fallback: Free MyMemory Translation API (works in all browsers without API keys)
+        try {
+            // Split into chunks under 450 chars if long passage
+            const sentences = textToTranslate.match(/[^.!?]+[.!?]*\s*/g) || [textToTranslate];
+            const chunks = [];
+            let current = '';
+            sentences.forEach(s => {
+                if ((current + s).length > 450) {
+                    if (current) chunks.push(current.trim());
+                    current = s;
+                } else {
+                    current += s;
+                }
+            });
+            if (current.trim()) chunks.push(current.trim());
+
+            const translatedParts = [];
+            for (const chunk of chunks) {
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=${sourceLang}|${targetLang}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data && data.responseData && data.responseData.translatedText) {
+                    translatedParts.push(data.responseData.translatedText);
+                } else {
+                    throw new Error('Translation response unavailable');
+                }
+            }
+
+            targetBox.value = translatedParts.join(' ');
+            saveBlockBoxes();
+            if (statusText) statusText.textContent = 'Translation complete (Free Translation Service). Review & listen below.';
+        } catch (err) {
+            if (statusText) {
+                statusText.textContent = 'Automatic translation offline. Click "Open Google Translate ↗" above to translate in a new tab.';
+            }
+        }
+    }
+
+    function saveBlockBoxes() {
+        const enBox = document.getElementById('block-english');
+        const esBox = document.getElementById('block-spanish');
+        if (enBox) localStorage.setItem(STORAGE_KEYS.BLOCK_EN, enBox.value);
+        if (esBox) localStorage.setItem(STORAGE_KEYS.BLOCK_ES, esBox.value);
+    }
+
+    /* ==========================================================================
+       8. GLOBAL NAVIGATION, ACTIONS & EVENT LISTENERS
+       ========================================================================== */
+    function switchMainView(viewName) {
+        stopSpeech();
+        state.currentView = viewName;
+
+        const views = {
+            practice: document.getElementById('practice-view'),
+            vocabulary: document.getElementById('vocabulary-view'),
+            block: document.getElementById('block-view')
+        };
+
+        Object.keys(views).forEach(key => {
+            if (views[key]) {
+                views[key].hidden = key !== viewName;
+            }
+        });
+
+        document.querySelectorAll('.main-tab').forEach(btn => {
+            const isTarget = btn.getAttribute('data-view') === viewName;
+            btn.classList.toggle('active', isTarget);
+            if (isTarget) {
+                btn.className = 'main-tab active flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-brand-gold text-brand-dark shadow-sm';
+            } else {
+                btn.className = 'main-tab flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-semibold transition-all text-white/85 hover:text-white hover:bg-white/10';
+            }
+        });
+    }
+
+    function setupGlobalListeners() {
+        // Main Navigation Tabs
+        document.querySelectorAll('.main-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const view = btn.getAttribute('data-view');
+                if (view) switchMainView(view);
+            });
+        });
+
+        // Delegated click handler for data-action buttons across all views
+        document.body.addEventListener('click', e => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            const action = btn.getAttribute('data-action');
+
+            if (action === 'set-speed') {
+                const rate = parseFloat(btn.getAttribute('data-rate'));
+                setSpeechSpeed(rate);
+            } else if (action === 'stop') {
+                stopSpeech();
+            } else if (action === 'test-voice') {
+                speakSingleText('Hola, esta es una prueba de voz en español para practicar tu pronunciación.');
+            } else if (action === 'block-play') {
+                const esBox = document.getElementById('block-spanish');
+                if (esBox) speakSingleText(esBox.value);
+            } else if (action === 'block-selection') {
+                const esBox = document.getElementById('block-spanish');
+                if (!esBox) return;
+                const selected = esBox.value.substring(esBox.selectionStart, esBox.selectionEnd).trim();
+                if (selected) {
+                    speakSingleText(selected);
+                } else {
+                    showToast('Highlight a word or sentence inside the Spanish box first, then click "Hear selection".');
+                }
+            } else if (action === 'block-translate-now') {
+                performBlockTranslation();
+            } else if (action === 'block-enable') {
+                state.liveTranslationEnabled = !state.liveTranslationEnabled;
+                btn.textContent = state.liveTranslationEnabled
+                    ? '✓ Live translation enabled'
+                    : 'Enable free live translation';
+                btn.className = state.liveTranslationEnabled
+                    ? 'action px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold transition shadow-sm'
+                    : 'action px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100 transition';
+                const statusText = document.getElementById('block-status-text');
+                if (statusText) {
+                    statusText.textContent = state.liveTranslationEnabled
+                        ? 'Live translation active: typing in the source box will automatically translate.'
+                        : 'Live translation paused. Click "Translate now" whenever you are ready.';
+                }
+                if (state.liveTranslationEnabled) {
+                    performBlockTranslation();
+                }
+            } else if (action === 'block-external') {
+                const dir = document.getElementById('block-direction')?.value || 'en-es';
+                const [sl, tl] = dir.split('-');
+                const sourceText = sl === 'en'
+                    ? document.getElementById('block-english')?.value
+                    : document.getElementById('block-spanish')?.value;
+                const url = `https://translate.google.com/?sl=${sl}&tl=${tl}&text=${encodeURIComponent(sourceText || '')}&op=translate`;
+                window.open(url, '_blank', 'noopener');
+            } else if (action === 'block-clear') {
+                stopSpeech();
+                const enBox = document.getElementById('block-english');
+                const esBox = document.getElementById('block-spanish');
+                if (enBox) enBox.value = '';
+                if (esBox) esBox.value = '';
+                saveBlockBoxes();
+                showToast('Text boxes cleared.');
+            }
+        });
+
+        // Delegated change handler for any .voice-select dropdown
+        document.body.addEventListener('change', e => {
+            if (e.target.classList.contains('voice-select')) {
+                state.selectedVoiceURI = e.target.value;
+                localStorage.setItem(STORAGE_KEYS.VOICE_URI, state.selectedVoiceURI);
+                syncVoiceSelectDropdowns();
+            }
+        });
+
+        // Vocabulary Search Input
+        const searchInput = document.getElementById('word-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', e => {
+                state.vocabSearchQuery = e.target.value;
+                renderVocabList();
+            });
+        }
+
+        // Custom Vocabulary Form Toggle & Submit
+        const toggleAddVocabBtn = document.getElementById('toggle-add-vocab-btn');
+        const closeAddVocabBtn = document.getElementById('close-add-vocab-btn');
+        const addVocabForm = document.getElementById('add-vocab-form');
+
+        if (toggleAddVocabBtn && addVocabForm) {
+            toggleAddVocabBtn.addEventListener('click', () => {
+                addVocabForm.classList.toggle('hidden');
+            });
+        }
+        if (closeAddVocabBtn && addVocabForm) {
+            closeAddVocabBtn.addEventListener('click', () => {
+                addVocabForm.classList.add('hidden');
+            });
+        }
+        if (addVocabForm) {
+            addVocabForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const unit = document.getElementById('custom-vocab-unit').value;
+                const es = document.getElementById('custom-vocab-es').value.trim();
+                const en = document.getElementById('custom-vocab-en').value.trim();
+                const example = document.getElementById('custom-vocab-example').value.trim();
+                if (!es || !en) return;
+
+                state.customVocab.unshift({
+                    id: 'cust_' + Date.now(),
+                    unit: unit || 'sec1',
+                    category: 'Personalizado',
+                    es,
+                    en,
+                    example,
+                    isCustom: true
+                });
+                saveCustomVocabToStorage();
+                addVocabForm.reset();
+                addVocabForm.classList.add('hidden');
+                renderVocabList();
+                showToast('Added to your vocabulary list!');
+            });
+        }
+
+        // Export / Import User Data JSON
+        const exportBtn = document.getElementById('export-data-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                const payload = {
+                    version: 1,
+                    exportedAt: new Date().toISOString(),
+                    tmas: state.tmas,
+                    customVocab: state.customVocab,
+                    blockEnglish: document.getElementById('block-english')?.value || '',
+                    blockSpanish: document.getElementById('block-spanish')?.value || ''
+                };
+                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'l106-spanish-practice-backup.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('Downloaded your L106 backup file.');
+            });
+        }
+
+        const importInput = document.getElementById('import-data-input');
+        if (importInput) {
+            importInput.addEventListener('change', e => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    try {
+                        const data = JSON.parse(reader.result);
+                        if (Array.isArray(data.tmas)) {
+                            state.tmas = data.tmas;
+                            saveTmasToStorage();
+                        }
+                        if (Array.isArray(data.customVocab)) {
+                            state.customVocab = data.customVocab;
+                            saveCustomVocabToStorage();
+                        }
+                        if (typeof data.blockEnglish === 'string') {
+                            const enBox = document.getElementById('block-english');
+                            if (enBox) enBox.value = data.blockEnglish;
+                        }
+                        if (typeof data.blockSpanish === 'string') {
+                            const esBox = document.getElementById('block-spanish');
+                            if (esBox) esBox.value = data.blockSpanish;
+                        }
+                        saveBlockBoxes();
+                        renderTmaTabs();
+                        renderCurrentTmaContent();
+                        renderVocabList();
+                        showToast('Successfully imported your saved scripts and vocabulary!');
+                    } catch (err) {
+                        showToast('Invalid backup file format.');
+                    }
+                };
+                reader.readAsText(file);
+                importInput.value = '';
+            });
+        }
+    }
+
+    /* ==========================================================================
+       9. UTILITIES (HTML ESCAPING & TOAST MESSAGES)
+       ========================================================================== */
+    function escapeHtml(str) {
+        return String(str || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    let toastTimeout = null;
+    function showToast(message) {
+        const banner = document.getElementById('toast-banner');
+        if (!banner) return;
+        banner.textContent = message;
+        banner.classList.remove('hidden');
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            banner.classList.add('hidden');
+        }, 3200);
+    }
+
+    /* ==========================================================================
+       10. INITIALIZE APPLICATION ON LOAD
+       ========================================================================== */
+    function init() {
+        renderTmaTabs();
+        renderCurrentTmaContent();
+        renderVocabUnitTabs();
+        renderVocabList();
+        initBlockPracticeView();
+        setupGlobalListeners();
+        setSpeechSpeed(state.speechRate);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
+</body>
 </html>
