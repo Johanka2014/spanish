@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spanish Practice App</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0f172a;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: none; /* Prevent scroll on touch */
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        /**
+         * ==========================================
+         * USER VERB DICTIONARY
+         * Add your new verbs here! 
+         * Format: { inf: 'infinitive', en: 'english translation' }
+         * ==========================================
+         */
+        const myVerbs = [
+            { inf: 'pasear', en: 'to stroll/walk' },
+            { inf: 'estudiar', en: 'to study' },
+            { inf: 'ver', en: 'to see', irregulars: { 0: 'veo', 4: 'veis' } }, // 'ver' has irregular yo and vosotros forms
+            { inf: 'desayunar', en: 'to have breakfast' },
+            { inf: 'trabajar', en: 'to work' },
+            { inf: 'comer', en: 'to eat' },
+            { inf: 'escribir', en: 'to write' },
+            { inf: 'hablar', en: 'to speak' },
+            { inf: 'llamarse', en: 'to be called' },
+            { inf: 'practicar', en: 'to practise' },
+            { inf: 'buscar', en: 'to look up (in a dictionary)' },
+            { inf: 'preguntar', en: 'to ask' },
+            { inf: 'contestar', en: 'to answer' },
+            { inf: 'vivir', en: 'to live' }
+            // Add new verbs here, for example:
+            // { inf: 'beber', en: 'to drink' },
+        ];
+
+        /**
+         * ==========================================
+         * PROFESSIONS DICTIONARY
+         * ==========================================
+         */
+        const myProfessions = [
+            // Business, Technology & Administration
+            { sp: 'El/la administrativo/a', en: 'Office / administrative assistant' },
+            { sp: 'El/la analista de datos', en: 'Data analyst' },
+            { sp: 'El/la contable', en: 'Accountant' },
+            { sp: 'El/la desarrollador/a de software', en: 'Software developer' },
+            { sp: 'El/la empleado/a de banca', en: 'Bank employee' },
+            { sp: 'El/la encargado/a', en: '(Shop) manager' },
+            { sp: 'El/la gerente', en: 'Manager' },
+            { sp: 'El/la gerente de medios digitales', en: 'Digital media manager' },
+            { sp: 'El/la programador/a', en: 'Programmer' },
+            { sp: 'El/la recepcionista', en: 'Receptionist' },
+            { sp: 'El/la secretario/a', en: 'Secretary' },
+            { sp: 'El/la trabajador/a de televentas', en: 'Telesales assistant' },
+            // Education & Science
+            { sp: 'El/la catedrático/a de universidad', en: 'University professor' },
+            { sp: 'El/la estudiante', en: 'Student' },
+            { sp: 'El/la maestro/a', en: 'School teacher' },
+            { sp: 'El/la maestro/a de ciencias', en: 'Science teacher' },
+            { sp: 'El/la profesor/a', en: 'Teacher (e.g. music)' },
+            { sp: 'La puericultora', en: 'Early years practitioner / nursery worker' },
+            // Health & Care
+            { sp: 'El/la cuidador/a', en: 'Care assistant' },
+            { sp: 'El/la enfermero/a', en: 'Nurse' },
+            { sp: 'El/la farmacéutico/a', en: 'Pharmacist' },
+            { sp: 'El/la médico/a', en: 'Doctor' },
+            { sp: 'El/la psicólogo/a', en: 'Psychologist' },
+            // Arts, Culture & Media
+            { sp: 'El actor / La actriz', en: 'Actor / actress' },
+            { sp: 'El/la artista', en: 'Artist' },
+            { sp: 'El/la cantante', en: 'Singer' },
+            { sp: 'El/la dibujante', en: 'Illustrator' },
+            { sp: 'El/la director/a de cine', en: 'Film director' },
+            { sp: 'El/la diseñador/a gráfico/a', en: 'Graphic designer' },
+            { sp: 'El/la escritor/a', en: 'Writer' },
+            { sp: 'El/la pianista', en: 'Pianist' },
+            { sp: 'El/la pintor/a', en: 'Painter' },
+            { sp: 'El/la periodista', en: 'Journalist' },
+            { sp: 'El/la reportero/a deportivo/a', en: 'Sports reporter' },
+            // Services, Retail & Hospitality
+            { sp: 'El/la agente de viajes', en: 'Travel agent' },
+            { sp: 'El/la ayudante de biblioteca', en: 'Library assistant' },
+            { sp: 'El/la cajero/a', en: 'Cashier / checkout assistant' },
+            { sp: 'El/la camarero/a', en: 'Waiter / waitress' },
+            { sp: 'El/la cocinero/a', en: 'Cook / chef' },
+            { sp: 'El/la dependiente/a', en: 'Shop assistant' },
+            { sp: 'El/la limpiador/a', en: 'Cleaner' },
+            { sp: 'El/la peluquero/a', en: 'Hairdresser' },
+            { sp: 'El/la portero/a', en: 'Caretaker / doorman / porter' },
+            { sp: 'El/la vendedor/a', en: 'Salesperson' },
+            // Trades, Transport & Industry
+            { sp: 'El/la arquitecto/a', en: 'Architect' },
+            { sp: 'El/la barrendero/a', en: 'Road sweeper' },
+            { sp: 'El/la camionero/a', en: 'Lorry driver' },
+            { sp: 'El/la carpintero/a', en: 'Carpenter' },
+            { sp: 'El/la electricista', en: 'Electrician' },
+            { sp: 'El/la fontanero/a', en: 'Plumber' },
+            { sp: 'El/la ingeniero/a', en: 'Engineer' },
+            { sp: 'El/la maquinista', en: 'Train driver' },
+            { sp: 'El/la panadero/a', en: 'Baker' },
+            { sp: 'El/la repartidor/a', en: 'Delivery person' },
+            { sp: 'El/la taxista', en: 'Taxi driver' },
+            // Legal, Public Sector & Safety
+            { sp: 'El/la abogado/a', en: 'Lawyer' },
+            { sp: 'El/la bombero/a', en: 'Firefighter' },
+            { sp: 'El/la controlador/a aéreo/a', en: 'Air traffic controller' },
+            { sp: 'El/la diputado/a', en: 'Member of Parliament' },
+            { sp: 'El/la guardia civil / de seguridad', en: 'Civil Guard / Security guard' },
+            { sp: 'El/la juez', en: 'Judge' },
+            { sp: 'El/la policía de tráfico', en: 'Traffic police officer' },
+            { sp: 'El/la sacerdote', en: 'Priest' },
+            { sp: 'El/la traductor/a', en: 'Translator' },
+            // Other Statuses / Situations
+            { sp: 'El/la ama de casa', en: 'Homemaker / housewife' },
+            { sp: 'El/la jubilado/a', en: 'Retired person' },
+            { sp: 'El/la parado/a', en: 'Unemployed person' },
+            { sp: 'El/la pensionista', en: 'Pensioner' }
+        ];
+
+        /**
+         * ==========================================
+         * DESCRIBING PEOPLE DICTIONARY
+         * ==========================================
+         */
+        const myDescriptions = [
+            // Physical Appearance - Height & Build
+            { sp: 'alto/a', en: 'tall' },
+            { sp: 'bajo/a', en: 'short' },
+            { sp: 'de estatura media', en: 'of average height' },
+            { sp: 'delgado/a / flaco/a', en: 'slim / thin' },
+            { sp: 'gordo/a / gordito/a / grueso/a', en: 'plump / fat' },
+            { sp: 'fuerte', en: 'strong' },
+            { sp: 'atlético/a', en: 'athletic' },
+            // Age & General Appearance
+            { sp: 'joven', en: 'young' },
+            { sp: 'mayor', en: 'older / elderly' },
+            { sp: 'guapo/a / lindo/a / bello/a', en: 'handsome / pretty / beautiful' },
+            { sp: 'feo/a', en: 'ugly' },
+            { sp: 'elegante', en: 'smart / elegant' },
+            { sp: 'embarazada', en: 'pregnant' },
+            // Face, Hair & Features
+            { sp: 'la cara redonda', en: 'round face' },
+            { sp: 'el pelo largo', en: 'long hair' },
+            { sp: 'el pelo corto', en: 'short hair' },
+            { sp: 'el pelo liso', en: 'straight hair' },
+            { sp: 'el pelo rizado', en: 'curly hair' },
+            { sp: 'rubio', en: 'blond' },
+            { sp: 'moreno / negro', en: 'dark / black (hair/skin)' },
+            { sp: 'castaño', en: 'brown (hair)' },
+            { sp: 'pelirrojo', en: 'redhead' },
+            { sp: 'cano / blanco / gris', en: 'grey / white (hair)' },
+            { sp: 'calvo/a', en: 'bald' },
+            { sp: 'los ojos claros', en: 'light eyes' },
+            { sp: 'los ojos oscuros', en: 'dark eyes' },
+            { sp: 'los ojos azules', en: 'blue eyes' },
+            { sp: 'los ojos negros', en: 'black eyes' },
+            { sp: 'los ojos verdes', en: 'green eyes' },
+            { sp: 'los ojos marrones / de color café', en: 'brown eyes' },
+            { sp: 'la piel oscura / morena', en: 'dark / tanned skin' },
+            { sp: 'la piel blanca', en: 'fair / white skin' },
+            { sp: 'la nariz (grande/pequeña)', en: 'nose (big/small)' },
+            { sp: 'la boca (grande/pequeña)', en: 'mouth (big/small)' },
+            { sp: 'los labios gruesos', en: 'full / thick lips' },
+            { sp: 'las cejas finas', en: 'thin eyebrows' },
+            { sp: 'las orejas', en: 'ears' },
+            { sp: 'la barba', en: 'beard' },
+            { sp: 'el bigote', en: 'moustache' },
+            { sp: 'las gafas', en: 'glasses' },
+            // Character & Personality
+            { sp: 'simpático/a', en: 'nice / friendly' },
+            { sp: 'amable', en: 'kind / polite' },
+            { sp: 'cariñoso/a', en: 'affectionate' },
+            { sp: 'alegre / animado/a', en: 'cheerful / lively' },
+            { sp: 'divertido/a', en: 'fun / entertaining' },
+            { sp: 'gracioso/a', en: 'funny / witty' },
+            { sp: 'tranquilo/a', en: 'calm / quiet' },
+            { sp: 'serio/a', en: 'serious' },
+            { sp: 'callado/a', en: 'quiet / reserved' },
+            { sp: 'generoso/a', en: 'generous' },
+            { sp: 'bueno/a', en: 'good / kind-hearted' },
+            { sp: 'despistado/a', en: 'absent-minded' },
+            { sp: 'trabajador/a', en: 'hard-working' },
+            { sp: 'terco/a', en: 'stubborn' },
+            { sp: 'acogedor/a', en: 'welcoming' },
+            { sp: 'sociable / amistoso/a', en: 'sociable / friendly' },
+            { sp: 'extrovertido/a', en: 'extroverted' },
+            { sp: 'abierto/a', en: 'open-minded' },
+            { sp: 'compasivo/a', en: 'compassionate' },
+            { sp: 'estudioso/a', en: 'studious' },
+            { sp: 'moderno/a', en: 'modern' },
+            { sp: 'tradicional', en: 'traditional' }
+        ];
+
+        /**
+         * ==========================================
+         * INTRODUCTIONS DICTIONARY
+         * ==========================================
+         */
+        const myIntroductions = [
+            // Greetings
+            { en: 'Greeting (Hello / How are you?)', sp: '¡Hola! / ¿Cómo estás? / ¿Qué tal?', type: 'Informal' },
+            { en: 'Greeting (Hello / How are you?)', sp: 'Buenos días / Buenas tardes, ¿cómo está usted?', type: 'Formal' },
+            
+            // Asking Name
+            { en: 'Asking Name', sp: '¿Cómo te llamas?', type: 'Informal' },
+            { en: 'Asking Name', sp: '¿Cómo se llama usted?', type: 'Formal' },
+            
+            // Stating Name
+            { en: 'Stating Name', sp: 'Me llamo [Name] / Soy [Name]', type: 'Informal' },
+            { en: 'Stating Name', sp: 'Me llamo [Name] / Soy el/la señor/a [Surname]', type: 'Formal' },
+            
+            // Asking Origin
+            { en: 'Asking Origin', sp: '¿De dónde eres?', type: 'Informal' },
+            { en: 'Asking Origin', sp: '¿De dónde es usted?', type: 'Formal' },
+            
+            // Nice to meet you
+            { en: 'Nice to meet you', sp: 'Mucho gusto / Encantado/a', type: 'Informal' },
+            { en: 'Nice to meet you', sp: 'Mucho gusto / Es un placer', type: 'Formal' }
+        ];
+
+        /**
+         * ==========================================
+         * STUDY & CLASSROOM DICTIONARY
+         * ==========================================
+         */
+        const myStudyVocab = [
+            { sp: 'estudiar', en: 'to study' },
+            { sp: 'difícil', en: 'difficult' },
+            { sp: 'practicar', en: 'to practise' },
+            { sp: 'buscar', en: 'to look up (in a dictionary)' },
+            { sp: 'la palabra', en: 'word' },
+            { sp: 'preguntar', en: 'to ask' },
+            { sp: 'la duda', en: 'doubt' },
+            { sp: 'el/la profesor/a', en: 'teacher' },
+            { sp: 'contestar', en: 'to answer' }
+        ];
+
+        /**
+         * ==========================================
+         * COUNTRIES & NATIONALITIES DICTIONARY
+         * ==========================================
+         */
+        const myNationalities = [
+            { country: 'Reino Unido', m: 'británico', f: 'británica' },
+            { country: 'Chile', m: 'chileno', f: 'chilena' },
+            { country: 'Argentina', m: 'argentino', f: 'argentina' },
+            { country: 'Cuba', m: 'cubano', f: 'cubana' },
+            { country: 'Portugal', m: 'portugués', f: 'portuguesa' },
+            { country: 'Estados Unidos', m: 'estadounidense', f: 'estadounidense' },
+            { country: 'Galicia', m: 'gallego', f: 'gallega' },
+            { country: 'País Vasco', m: 'vasco', f: 'vasca' },
+            { country: 'España', m: 'español', f: 'española' },
+            { country: 'China', m: 'chino', f: 'china' },
+            { country: 'Iraq', m: 'iraquí', f: 'iraquí' },
+            { country: 'Canadá', m: 'canadiense', f: 'canadiense' }
+        ];
+
+        /**
+         * ==========================================
+         * ALPHABET DICTIONARY
+         * ==========================================
+         */
+        const myAlphabet = [
+            { letter: 'A', name: 'a' }, { letter: 'B', name: 'be' }, { letter: 'C', name: 'ce' }, 
+            { letter: 'D', name: 'de' }, { letter: 'E', name: 'e' }, { letter: 'F', name: 'efe' }, 
+            { letter: 'G', name: 'ge' }, { letter: 'H', name: 'hache' }, { letter: 'I', name: 'i' }, 
+            { letter: 'J', name: 'jota' }, { letter: 'K', name: 'ka' }, { letter: 'L', name: 'ele' }, 
+            { letter: 'LL', name: 'elle' }, { letter: 'M', name: 'eme' }, { letter: 'N', name: 'ene' }, 
+            { letter: 'Ñ', name: 'eñe' }, { letter: 'O', name: 'o' }, { letter: 'P', name: 'pe' }, 
+            { letter: 'Q', name: 'cu' }, { letter: 'R', name: 'erre' }, { letter: 'S', name: 'ese' }, 
+            { letter: 'T', name: 'te' }, { letter: 'U', name: 'u' }, { letter: 'V', name: 'uve' }, 
+            { letter: 'W', name: 'uve doble' }, { letter: 'X', name: 'equis' }, 
+            { letter: 'Y', name: 'i griega' }, { letter: 'Z', name: 'zeta' }
+        ];
+
+        /**
+         * ==========================================
+         * CLOTHES DICTIONARY
+         * ==========================================
+         */
+        const myClothes = [
+            // Tops & Upper Body Wear
+            { sp: 'la camisa', en: 'shirt' },
+            { sp: 'la camisa de cuadros', en: 'checked shirt' },
+            { sp: 'la camisa de flores', en: 'floral shirt' },
+            { sp: 'la camiseta', en: 'T-shirt' },
+            { sp: 'la blusa', en: 'blouse' },
+            { sp: 'el jersey / el suéter', en: 'jumper / sweater' },
+            { sp: 'el jersey de rayas', en: 'striped jumper' },
+            { sp: 'la chaqueta', en: 'jacket' },
+            { sp: 'la chaqueta de lana', en: 'cardigan / wool jacket' },
+            { sp: 'la chaqueta ligera', en: 'light jacket' },
+            { sp: 'el traje de chaqueta', en: 'suit (jacket suit)' },
+            // Lower Body & Full Outfits
+            { sp: 'los pantalones', en: 'trousers / pants' },
+            { sp: 'los pantalones cortos', en: 'shorts' },
+            { sp: 'los pantalones vaqueros / los vaqueros', en: 'jeans' },
+            { sp: 'la falda', en: 'skirt' },
+            { sp: 'la falda corta', en: 'miniskirt / short skirt' },
+            { sp: 'el vestido', en: 'dress' },
+            { sp: 'el vestido fresco', en: 'light / cool summer dress' },
+            { sp: 'el chándal', en: 'tracksuit' },
+            { sp: 'la ropa deportiva', en: 'sportswear' },
+            { sp: 'el uniforme', en: 'uniform' },
+            { sp: 'el bikini', en: 'bikini' },
+            // Outerwear & Cold Weather Gear
+            { sp: 'el abrigo', en: 'coat' },
+            { sp: 'el abrigo ligero', en: 'light coat' },
+            { sp: 'la bufanda', en: 'scarf' },
+            { sp: 'los guantes', en: 'gloves' },
+            { sp: 'el gorro', en: 'beanie / woolly hat' },
+            // Footwear & Legwear
+            { sp: 'los zapatos', en: 'shoes' },
+            { sp: 'los zapatos de tacón / zapatos altos', en: 'high heels' },
+            { sp: 'las zapatillas deportivas / los tenis', en: 'trainers / sports shoes' },
+            { sp: 'las botas', en: 'boots' },
+            { sp: 'las sandalias', en: 'sandals' },
+            { sp: 'los calcetines', en: 'socks' },
+            // Accessories & Headwear
+            { sp: 'el sombrero', en: 'hat' },
+            { sp: 'la corbata', en: 'tie' },
+            { sp: 'las gafas / las gafas de sol', en: 'glasses / sunglasses' },
+            { sp: 'el bolso', en: 'handbag / bag' },
+            { sp: 'la mochila', en: 'rucksack / backpack' },
+            { sp: 'el pañuelo', en: 'neckerchief / headscarf' },
+            { sp: 'la mantilla / el mantón / el chal', en: 'traditional shawl' }
+        ];
+
+        /**
+         * ==========================================
+         * MONTHS DICTIONARY
+         * ==========================================
+         */
+        const myMonths = [
+            { sp: 'enero', en: 'January' },
+            { sp: 'febrero', en: 'February' },
+            { sp: 'marzo', en: 'March' },
+            { sp: 'abril', en: 'April' },
+            { sp: 'mayo', en: 'May' },
+            { sp: 'junio', en: 'June' },
+            { sp: 'julio', en: 'July' },
+            { sp: 'agosto', en: 'August' },
+            { sp: 'septiembre', en: 'September' },
+            { sp: 'octubre', en: 'October' },
+            { sp: 'noviembre', en: 'November' },
+            { sp: 'diciembre', en: 'December' }
+        ];
+
+        // --- Core Setup ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let DPR = window.devicePixelRatio || 1;
+        let width, height;
+
+        // --- Game State ---
+        let state = 'MENU'; // MENU, QUIZ
+        let currentMenu = 'MAIN'; // MAIN, NUMBERS, GRAMMAR, VOCABULARY
+        let quizType = ''; // CARDINAL, ORDINAL, TIME, VERB, etc.
+        let score = 0;
+        let questionsCompleted = 0;
+        const totalQuestions = 10;
+        let currentQuestion = null;
+        let buttons = [];
+        let particles = [];
+        let feedbackTimer = 0;
+        let feedbackMessage = '';
+        let feedbackColor = '';
+
+        // --- Audio Context for simple sound effects ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        function playSound(type) {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        // --- Speech Synthesis ---
+        function speakSpanish(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop any currently playing speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES'; // Set language to Spanish
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- Resize Handling ---
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width * DPR;
+            canvas.height = height * DPR;
+            ctx.scale(DPR, DPR);
+            setupUI();
+        }
+        window.addEventListener('resize', resize);
+
+        // --- Spanish Generators ---
+        const units = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
+        const teens = ['diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve'];
+        const tens = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+
+        function getCardinal(num) {
+            if (num === 100) return 'cien';
+            if (num < 10) return units[num];
+            if (num < 20) return teens[num - 10];
+            if (num < 30) return num === 20 ? 'veinte' : 'veinti' + (num === 22 ? 'dós' : num === 23 ? 'trés' : num === 26 ? 'séis' : units[num - 20]);
+            const t = Math.floor(num / 10);
+            const u = num % 10;
+            return tens[t] + (u > 0 ? ' y ' + units[u] : '');
+        }
+
+        const ordinals = ['primero', 'segundo', 'tercero', 'cuarto', 'quinto', 'sexto', 'séptimo', 'octavo', 'noveno', 'décimo'];
+
+        function getTimeString(h, m) {
+            let hourSpan = h % 12 || 12;
+            let nextHourSpan = (h + 1) % 12 || 12;
+            
+            let timeStr = (hourSpan === 1 && m <= 30) ? "Es la una" : 
+                          (nextHourSpan === 1 && m > 30) ? "Es la una" : 
+                          "Son las " + (m <= 30 ? getCardinal(hourSpan) : getCardinal(nextHourSpan));
+                          
+            if (m === 0) return timeStr + " en punto";
+            if (m <= 30) {
+                if (m === 15) return timeStr + " y cuarto";
+                if (m === 30) return timeStr + " y media";
+                return timeStr + " y " + getCardinal(m);
+            } else {
+                let minsLeft = 60 - m;
+                if (minsLeft === 15) return timeStr + " menos cuarto";
+                return timeStr + " menos " + getCardinal(minsLeft);
+            }
+        }
+
+        // --- Verb Conjugation Logic ---
+        const pronouns = ['Yo', 'Tú', 'Él/Ella/Ud.', 'Nosotros', 'Vosotros', 'Ellos/Ellas/Uds.'];
+        const endings = {
+            'ar': ['o', 'as', 'a', 'amos', 'áis', 'an'],
+            'er': ['o', 'es', 'e', 'emos', 'éis', 'en'],
+            'ir': ['o', 'es', 'e', 'imos', 'ís', 'en']
+        };
+
+        function conjugateVerb(verbObj, pronounIndex) {
+            if (verbObj.irregulars && verbObj.irregulars[pronounIndex]) {
+                return verbObj.irregulars[pronounIndex];
+            }
+            const inf = verbObj.inf;
+            
+            // Handle reflexive verbs (ending in 'se')
+            const isReflexive = inf.endsWith('se');
+            const actualInf = isReflexive ? inf.slice(0, -2) : inf;
+            
+            const type = actualInf.slice(-2);
+            const stem = actualInf.slice(0, -2);
+            
+            const conjugated = stem + endings[type][pronounIndex];
+            
+            if (isReflexive) {
+                const reflexives = ['me', 'te', 'se', 'nos', 'os', 'se'];
+                return reflexives[pronounIndex] + ' ' + conjugated;
+            }
+            
+            return conjugated;
+        }
+
+        // --- Quiz Generation ---
+        function generateQuestion() {
+            let qText = '';
+            let correctAnswer = '';
+            let distractors = [];
+            let watchDisplay = null;
+
+            if (quizType === 'CARDINAL') {
+                const num = Math.floor(Math.random() * 100) + 1;
+                qText = `Translate: ${num}`;
+                correctAnswer = getCardinal(num);
+                while(distractors.length < 3) {
+                    const wrong = getCardinal(Math.floor(Math.random() * 100) + 1);
+                    if (wrong !== correctAnswer && !distractors.includes(wrong)) distractors.push(wrong);
+                }
+            } 
+            else if (quizType === 'ORDINAL') {
+                const num = Math.floor(Math.random() * 10) + 1;
+                qText = `Translate: ${num}${num===1?'st':num===2?'nd':num===3?'rd':'th'}`;
+                correctAnswer = ordinals[num - 1];
+                while(distractors.length < 3) {
+                    const wrong = ordinals[Math.floor(Math.random() * 10)];
+                    if (wrong !== correctAnswer && !distractors.includes(wrong)) distractors.push(wrong);
+                }
+            } 
+            else if (quizType === 'TIME') {
+                const h = Math.floor(Math.random() * 12) + 1;
+                const m = [0, 10, 15, 20, 30, 40, 45, 50][Math.floor(Math.random() * 8)]; // Common times
+                watchDisplay = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                qText = "What time is it?";
+                correctAnswer = getTimeString(h, m);
+                
+                while(distractors.length < 3) {
+                    const wh = Math.floor(Math.random() * 12) + 1;
+                    const wm = [0, 10, 15, 20, 30, 40, 45, 50][Math.floor(Math.random() * 8)];
+                    const wrong = getTimeString(wh, wm);
+                    if (wrong !== correctAnswer && !distractors.includes(wrong)) distractors.push(wrong);
+                }
+            }
+            else if (quizType.startsWith('VERB')) {
+                const verbObj = myVerbs[Math.floor(Math.random() * myVerbs.length)];
+                
+                let pronounIdx;
+                if (quizType.includes('_')) {
+                    pronounIdx = parseInt(quizType.split('_')[1]);
+                } else {
+                    pronounIdx = Math.floor(Math.random() * 6);
+                }
+                
+                const pronoun = pronouns[pronounIdx];
+                qText = `${pronoun} + ${verbObj.inf} (${verbObj.en})`;
+                correctAnswer = conjugateVerb(verbObj, pronounIdx);
+
+                while(distractors.length < 3) {
+                    let wrong;
+                    // To make it a good test, mostly use the SAME verb but with the WRONG pronoun endings!
+                    if (distractors.length < 2) {
+                        let wrongIdx = Math.floor(Math.random() * 6);
+                        wrong = conjugateVerb(verbObj, wrongIdx);
+                    } else {
+                        // Occasionally throw in a completely random verb for variety
+                        const randVerb = myVerbs[Math.floor(Math.random() * myVerbs.length)];
+                        const randPronounIdx = Math.floor(Math.random() * 6);
+                        wrong = conjugateVerb(randVerb, randPronounIdx);
+                    }
+                    if (wrong !== correctAnswer && !distractors.includes(wrong)) distractors.push(wrong);
+                }
+            }
+            else if (quizType === 'PROFESSION') {
+                const profObj = myProfessions[Math.floor(Math.random() * myProfessions.length)];
+                qText = `Translate: ${profObj.en}`;
+                correctAnswer = profObj.sp;
+
+                while(distractors.length < 3) {
+                    const wrongProf = myProfessions[Math.floor(Math.random() * myProfessions.length)];
+                    if (wrongProf.sp !== correctAnswer && !distractors.includes(wrongProf.sp)) {
+                        distractors.push(wrongProf.sp);
+                    }
+                }
+            }
+            else if (quizType === 'DESCRIPTION') {
+                const descObj = myDescriptions[Math.floor(Math.random() * myDescriptions.length)];
+                qText = `Translate: ${descObj.en}`;
+                correctAnswer = descObj.sp;
+
+                while(distractors.length < 3) {
+                    const wrongDesc = myDescriptions[Math.floor(Math.random() * myDescriptions.length)];
+                    if (wrongDesc.sp !== correctAnswer && !distractors.includes(wrongDesc.sp)) {
+                        distractors.push(wrongDesc.sp);
+                    }
+                }
+            }
+            else if (quizType === 'INTRO') {
+                const introObj = myIntroductions[Math.floor(Math.random() * myIntroductions.length)];
+                qText = `Translate (${introObj.type}): ${introObj.en}`;
+                correctAnswer = introObj.sp;
+
+                // Try to find the exact opposite formality to use as a tricky distractor
+                const opposite = myIntroductions.find(item => item.en === introObj.en && item.type !== introObj.type);
+                if (opposite && !distractors.includes(opposite.sp)) {
+                    distractors.push(opposite.sp);
+                }
+
+                while(distractors.length < 3) {
+                    const randomIntro = myIntroductions[Math.floor(Math.random() * myIntroductions.length)];
+                    if (randomIntro.sp !== correctAnswer && !distractors.includes(randomIntro.sp)) {
+                        distractors.push(randomIntro.sp);
+                    }
+                }
+            }
+            else if (quizType === 'STUDY_VOCAB') {
+                const vocabObj = myStudyVocab[Math.floor(Math.random() * myStudyVocab.length)];
+                qText = `Translate: ${vocabObj.en}`;
+                correctAnswer = vocabObj.sp;
+
+                while(distractors.length < 3) {
+                    const wrongVocab = myStudyVocab[Math.floor(Math.random() * myStudyVocab.length)];
+                    if (wrongVocab.sp !== correctAnswer && !distractors.includes(wrongVocab.sp)) {
+                        distractors.push(wrongVocab.sp);
+                    }
+                }
+            }
+            else if (quizType === 'NATIONALITY') {
+                const natObj = myNationalities[Math.floor(Math.random() * myNationalities.length)];
+                const isFeminine = Math.random() > 0.5;
+                const genderLabel = isFeminine ? 'Feminine' : 'Masculine';
+                
+                qText = `${natObj.country} (${genderLabel})`;
+                correctAnswer = isFeminine ? natObj.f : natObj.m;
+
+                // Try to add the opposite gender as a tricky distractor if they are different
+                const opposite = isFeminine ? natObj.m : natObj.f;
+                if (opposite !== correctAnswer && !distractors.includes(opposite)) {
+                    distractors.push(opposite);
+                }
+
+                while(distractors.length < 3) {
+                    const randomNat = myNationalities[Math.floor(Math.random() * myNationalities.length)];
+                    const wrongAns = isFeminine ? randomNat.f : randomNat.m;
+                    if (wrongAns !== correctAnswer && !distractors.includes(wrongAns)) {
+                        distractors.push(wrongAns);
+                    }
+                }
+            }
+            else if (quizType === 'ALPHABET') {
+                // Focus on spelling/naming the letter so the TTS reads the Spanish name properly
+                const letterObj = myAlphabet[Math.floor(Math.random() * myAlphabet.length)];
+                qText = `Name the letter: ${letterObj.letter}`;
+                correctAnswer = letterObj.name;
+
+                while(distractors.length < 3) {
+                    const randomLetter = myAlphabet[Math.floor(Math.random() * myAlphabet.length)];
+                    if (randomLetter.name !== correctAnswer && !distractors.includes(randomLetter.name)) {
+                        distractors.push(randomLetter.name);
+                    }
+                }
+            }
+            else if (quizType === 'CLOTHES') {
+                const itemObj = myClothes[Math.floor(Math.random() * myClothes.length)];
+                qText = `Translate: ${itemObj.en}`;
+                correctAnswer = itemObj.sp;
+
+                while(distractors.length < 3) {
+                    const randomItem = myClothes[Math.floor(Math.random() * myClothes.length)];
+                    if (randomItem.sp !== correctAnswer && !distractors.includes(randomItem.sp)) {
+                        distractors.push(randomItem.sp);
+                    }
+                }
+            }
+            else if (quizType === 'MONTHS') {
+                const monthObj = myMonths[Math.floor(Math.random() * myMonths.length)];
+                qText = `Translate: ${monthObj.en}`;
+                correctAnswer = monthObj.sp;
+
+                while(distractors.length < 3) {
+                    const randomMonth = myMonths[Math.floor(Math.random() * myMonths.length)];
+                    if (randomMonth.sp !== correctAnswer && !distractors.includes(randomMonth.sp)) {
+                        distractors.push(randomMonth.sp);
+                    }
+                }
+            }
+
+            let options = [correctAnswer, ...distractors];
+            options.sort(() => Math.random() - 0.5); // Shuffle
+
+            currentQuestion = { qText, watchDisplay, correctAnswer, options };
+            setupUI();
+        }
+
+        // --- UI & Rendering ---
+        function createButton(id, text, x, y, w, h, color, action) {
+            return { id, text, x, y, w, h, color, action };
+        }
+
+        function setupUI() {
+            buttons = [];
+            if (state === 'MENU') {
+                const bw = Math.min(width * 0.8, 400);
+                
+                if (currentMenu === 'MAIN') {
+                    // Large Main Menu Tiles
+                    const bh = height < 750 ? 90 : 120; 
+                    const gap = 20;
+                    let startY = (height / 2) - ((3 * bh + 2 * gap) / 2) + 30;
+                    
+                    buttons.push(createButton('btn_cat_num', '🔢 Numbers & Time', width/2 - bw/2, startY, bw, bh, '#3b82f6', () => { currentMenu = 'NUMBERS'; setupUI(); }));
+                    buttons.push(createButton('btn_cat_gram', '✍️ Grammar', width/2 - bw/2, startY + bh + gap, bw, bh, '#f59e0b', () => { currentMenu = 'GRAMMAR'; setupUI(); }));
+                    buttons.push(createButton('btn_cat_voc', '📚 Vocabulary', width/2 - bw/2, startY + (bh + gap)*2, bw, bh, '#ec4899', () => { currentMenu = 'VOCABULARY'; setupUI(); }));
+                
+                } else if (currentMenu === 'NUMBERS') {
+                    const bh = 60; const gap = 15;
+                    let startY = height * 0.3;
+                    
+                    buttons.push(createButton('btn_card', 'Numbers (1-100)', width/2 - bw/2, startY, bw, bh, '#3b82f6', () => startQuiz('CARDINAL')));
+                    buttons.push(createButton('btn_ord', 'Ordinals (1st-10th)', width/2 - bw/2, startY + bh + gap, bw, bh, '#8b5cf6', () => startQuiz('ORDINAL')));
+                    buttons.push(createButton('btn_time', 'Telling Time', width/2 - bw/2, startY + (bh + gap)*2, bw, bh, '#10b981', () => startQuiz('TIME')));
+                    
+                    buttons.push(createButton('btn_back', '← Back to Main', width/2 - bw/2, startY + (bh + gap)*4, bw, 50, '#475569', () => { currentMenu = 'MAIN'; setupUI(); }));
+                
+                } else if (currentMenu === 'GRAMMAR') {
+                    const bh = height < 750 ? 40 : 50; 
+                    const gap = height < 750 ? 6 : 10;
+                    let startY = height < 750 ? height * 0.16 : height * 0.18;
+                    
+                    buttons.push(createButton('btn_verb_all', 'All Pronouns (Mixed)', width/2 - bw/2, startY, bw, bh, '#f59e0b', () => startQuiz('VERB')));
+                    buttons.push(createButton('btn_verb_0', 'I (Yo)', width/2 - bw/2, startY + (bh + gap), bw, bh, '#fbbf24', () => startQuiz('VERB_0')));
+                    buttons.push(createButton('btn_verb_1', 'You (Tú)', width/2 - bw/2, startY + (bh + gap)*2, bw, bh, '#f59e0b', () => startQuiz('VERB_1')));
+                    buttons.push(createButton('btn_verb_2', 'He/She/You (Él/Ella/Ud.)', width/2 - bw/2, startY + (bh + gap)*3, bw, bh, '#d97706', () => startQuiz('VERB_2')));
+                    buttons.push(createButton('btn_verb_3', 'We (Nosotros)', width/2 - bw/2, startY + (bh + gap)*4, bw, bh, '#b45309', () => startQuiz('VERB_3')));
+                    buttons.push(createButton('btn_verb_4', 'You all (Vosotros)', width/2 - bw/2, startY + (bh + gap)*5, bw, bh, '#92400e', () => startQuiz('VERB_4')));
+                    buttons.push(createButton('btn_verb_5', 'They/You all (Ellos/Uds.)', width/2 - bw/2, startY + (bh + gap)*6, bw, bh, '#78350f', () => startQuiz('VERB_5')));
+                    
+                    buttons.push(createButton('btn_back', '← Back to Main', width/2 - bw/2, startY + (bh + gap)*7.5, bw, 45, '#475569', () => { currentMenu = 'MAIN'; setupUI(); }));
+                
+                } else if (currentMenu === 'VOCABULARY') {
+                    const bh = height < 800 ? 35 : 45; 
+                    const gap = height < 800 ? 5 : 8;
+                    let startY = height < 800 ? height * 0.15 : height * 0.18;
+                    
+                    buttons.push(createButton('btn_prof', 'Professions', width/2 - bw/2, startY, bw, bh, '#ec4899', () => startQuiz('PROFESSION')));
+                    buttons.push(createButton('btn_desc', 'Descriptions', width/2 - bw/2, startY + (bh + gap), bw, bh, '#06b6d4', () => startQuiz('DESCRIPTION')));
+                    buttons.push(createButton('btn_intro', 'Introductions', width/2 - bw/2, startY + (bh + gap)*2, bw, bh, '#eab308', () => startQuiz('INTRO')));
+                    buttons.push(createButton('btn_study', 'Study & Classroom', width/2 - bw/2, startY + (bh + gap)*3, bw, bh, '#84cc16', () => startQuiz('STUDY_VOCAB')));
+                    buttons.push(createButton('btn_nat', 'Countries & National', width/2 - bw/2, startY + (bh + gap)*4, bw, bh, '#ef4444', () => startQuiz('NATIONALITY')));
+                    buttons.push(createButton('btn_alpha', 'Alphabet (Abecedario)', width/2 - bw/2, startY + (bh + gap)*5, bw, bh, '#f43f5e', () => startQuiz('ALPHABET')));
+                    buttons.push(createButton('btn_clothes', 'Clothes (La Ropa)', width/2 - bw/2, startY + (bh + gap)*6, bw, bh, '#a855f7', () => startQuiz('CLOTHES')));
+                    buttons.push(createButton('btn_months', 'Months (Los Meses)', width/2 - bw/2, startY + (bh + gap)*7, bw, bh, '#14b8a6', () => startQuiz('MONTHS')));
+                    
+                    buttons.push(createButton('btn_back', '← Back to Main', width/2 - bw/2, startY + (bh + gap)*8.5, bw, 40, '#475569', () => { currentMenu = 'MAIN'; setupUI(); }));
+                }
+            } else if (state === 'QUIZ' && currentQuestion && feedbackTimer === 0) {
+                const bw = Math.min(width * 0.9, 500);
+                const bh = 65;
+                const gap = 15;
+                const startY = height * 0.55;
+
+                const mainWidth = bw - 70;
+                const speakerWidth = 60;
+
+                currentQuestion.options.forEach((opt, i) => {
+                    const y = startY + (bh + gap) * i;
+                    const startX = width / 2 - bw / 2;
+                    
+                    // Main answer button
+                    buttons.push(createButton(`ans_${i}`, opt, startX, y, mainWidth, bh, '#1e293b', () => checkAnswer(opt)));
+                    
+                    // Speaker button
+                    buttons.push(createButton(`speak_${i}`, '🔊', startX + mainWidth + 10, y, speakerWidth, bh, '#334155', () => speakSpanish(opt)));
+                });
+
+                // Back button (returns to current active submenu)
+                buttons.push(createButton('btn_back', '← Menu', 20, 20, 100, 40, '#475569', () => { state = 'MENU'; setupUI(); }));
+            }
+        }
+
+        function startQuiz(type) {
+            quizType = type;
+            state = 'QUIZ';
+            questionsCompleted = 0;
+            score = 0;
+            generateQuestion();
+        }
+
+        function checkAnswer(selected) {
+            if (feedbackTimer > 0) return;
+            
+            speakSpanish(selected); // Speak the chosen answer aloud
+            
+            questionsCompleted++;
+            if (selected === currentQuestion.correctAnswer) {
+                score += 10;
+                feedbackMessage = '¡Excelente!';
+                feedbackColor = '#10b981';
+                playSound('correct');
+                createParticles();
+            } else {
+                feedbackMessage = `Incorrect. The answer was: ${currentQuestion.correctAnswer}`;
+                feedbackColor = '#ef4444';
+                playSound('wrong');
+            }
+
+            buttons = []; // clear buttons to prevent clicking
+            feedbackTimer = 120; // 2 seconds at 60fps
+        }
+
+        function createParticles() {
+            for(let i=0; i<50; i++) {
+                particles.push({
+                    x: width / 2,
+                    y: height / 2,
+                    vx: (Math.random() - 0.5) * 15,
+                    vy: (Math.random() - 0.5) * 15,
+                    life: 1.0,
+                    color: ['#10b981', '#3b82f6', '#f59e0b', '#fff'][Math.floor(Math.random()*4)]
+                });
+            }
+        }
+
+        // --- Drawing ---
+        function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            if (fill) {
+                ctx.fillStyle = fill;
+                ctx.fill();
+            }
+            if (stroke) {
+                ctx.strokeStyle = stroke;
+                ctx.stroke();
+            }
+        }
+
+        function drawText(text, x, y, size, color, align='center', isBold=false) {
+            ctx.fillStyle = color;
+            ctx.font = `${isBold ? 'bold' : ''} ${size}px 'Segoe UI', sans-serif`;
+            ctx.textAlign = align;
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, x, y);
+        }
+
+        function drawWatch(x, y, text) {
+            const w = 220;
+            const h = 90;
+            // Watch Band
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(x - 80, y - h/2 - 20, 160, h + 40);
+            
+            // Watch Face
+            roundRect(ctx, x - w/2, y - h/2, w, h, 15, '#020617', '#475569');
+            
+            // Neon Text
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#0ea5e9';
+            drawText(text, x, y, 48, '#38bdf8', 'center', true);
+            ctx.shadowBlur = 0; // reset
+        }
+
+        function draw() {
+            // Background
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, width, height);
+
+            if (state === 'MENU') {
+                // Adjust Title Y positions on small screens
+                const titleY = height < 750 ? height * 0.08 : height * 0.12;
+                const subtitleY = height < 750 ? height * 0.14 : height * 0.18;
+                drawText('¡Aprende Español!', width/2, titleY, 36, '#ffffff', 'center', true);
+                
+                let subtitleText = 'Select a category to begin';
+                if (currentMenu === 'NUMBERS') subtitleText = 'Practice Numbers & Time';
+                if (currentMenu === 'GRAMMAR') subtitleText = 'Practice Grammar';
+                if (currentMenu === 'VOCABULARY') subtitleText = 'Practice Vocabulary';
+                
+                drawText(subtitleText, width/2, subtitleY, 18, '#94a3b8', 'center');
+            } 
+            else if (state === 'QUIZ') {
+                // Header HUD
+                drawText(`Score: ${score}`, 20, 80, 20, '#f59e0b', 'left', true);
+                drawText(`Question: ${questionsCompleted}/${totalQuestions}`, width - 20, 80, 20, '#38bdf8', 'right', true);
+
+                if (currentQuestion) {
+                    if (quizType === 'TIME' && currentQuestion.watchDisplay) {
+                        drawText(currentQuestion.qText, width/2, height * 0.18, 24, '#ffffff', 'center', true);
+                        drawWatch(width/2, height * 0.35, currentQuestion.watchDisplay);
+                    } else {
+                        // Dynamically scale text down if the question is long
+                        let qSize = 32;
+                        if (currentQuestion.qText.length > 30) qSize = 24;
+                        if (currentQuestion.qText.length > 45) qSize = 18;
+                        drawText(currentQuestion.qText, width/2, height * 0.3, qSize, '#ffffff', 'center', true);
+                    }
+                }
+
+                // Feedback overlay
+                if (feedbackTimer > 0) {
+                    drawText(feedbackMessage, width/2, height * 0.6, 24, feedbackColor, 'center', true);
+                }
+            }
+
+            // Draw Buttons
+            buttons.forEach(b => {
+                roundRect(ctx, b.x, b.y, b.w, b.h, 12, b.color);
+                
+                // Button text wrapping/sizing logic
+                let fontSize = 20;
+                if (b.text.length > 25) fontSize = 16;
+                if (b.text.length > 35) fontSize = 13;
+                
+                drawText(b.text, b.x + b.w/2, b.y + b.h/2, fontSize, '#ffffff', 'center', true);
+            });
+
+            // Particles
+            particles.forEach(p => {
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1.0;
+        }
+
+        function update() {
+            if (feedbackTimer > 0) {
+                feedbackTimer--;
+                if (feedbackTimer === 0) {
+                    if (questionsCompleted >= totalQuestions) {
+                        state = 'MENU';
+                        setupUI();
+                    } else {
+                        generateQuestion();
+                    }
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.02;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        // --- Input Handling ---
+        function handleInput(e) {
+            e.preventDefault();
+            if (feedbackTimer > 0 && state === 'QUIZ') return; // block input during feedback
+            
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            buttons.forEach(b => {
+                if (clientX >= b.x && clientX <= b.x + b.w &&
+                    clientY >= b.y && clientY <= b.y + b.h) {
+                    b.action();
+                }
+            });
+        }
+
+        canvas.addEventListener('mousedown', handleInput);
+        canvas.addEventListener('touchstart', handleInput, {passive: false});
+
+        // Initialize
+        resize();
+        loop();
+
+    </script>
+</body>
+</html>
