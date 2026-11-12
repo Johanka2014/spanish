@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#123e56">
+    <meta name="description" content="Bilingual Spanish practice scripts for TMA 01–04 and spoken vocabulary organised by course section.">
+    <title>Spanish TMA Practice | L106 class edition</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23123e56'/%3E%3Cpath d='M13 18h16q4 0 4 4v26q-4-3-9-3H13zM51 18H35q-4 0-4 4v26q4-3 9-3h11z' fill='none' stroke='%23f5c46a' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">ñ</span><span>Spanish TMA Practice <small>L106 · Class edition</small></span></div>
+    <nav class="primary-nav" aria-label="Main navigation">
+        <button type="button" class="main-tab active" data-view="practice">TMA practice</button>
+        <button type="button" class="main-tab" data-view="vocabulary">Vocabulary by Sección</button>
+        <button type="button" class="main-tab" data-view="block">Text practice</button>
+    </nav>
+</header>
+<main class="site-main">
+    <section id="practice-view" class="view" aria-labelledby="practice-heading">
+        <div class="section-intro"><div><p class="eyebrow">LISTEN AND REHEARSE</p><h1 id="practice-heading">TMA 01–04 practice</h1><p>Original example answers in Spanish with English beside each line. Choose a test, listen, then adapt the details for yourself.</p></div></div>
+        <div class="tma-switch" role="tablist" aria-label="Choose assignment"></div>
+        <div id="tma-content"></div>
+    </section>
+    <section id="vocabulary-view" class="view" aria-labelledby="vocab-heading" hidden>
+        <div class="section-intro"><div><p class="eyebrow">COURSE VOCABULARY</p><h1 id="vocab-heading">Vocabulary by Sección</h1><p>Browse the course topics and everyday situations. Select a word or phrase to hear it in Spanish.</p></div></div>
+        <div class="vocab-toolbar"><div class="unit-switch" role="tablist" aria-label="Choose unit"></div><label class="search-label" for="word-search">Find a word <input id="word-search" type="search" placeholder="Search Spanish or English…" autocomplete="off"></label></div>
+        <div id="vocab-content"></div>
+    </section>
+    <section id="block-view" class="view" aria-labelledby="block-heading" hidden>
+        <div class="section-intro"><div><p class="eyebrow">PASTE, TRANSLATE AND LISTEN</p><h1 id="block-heading">Text practice</h1><p>Paste a paragraph or a longer passage in either language. Translate it, edit both versions and listen to the Spanish with the same voice and speed controls.</p></div></div>
+        <article class="assignment-card block-card">
+            <div class="note-panel"><p>Your text is saved in this browser. Automatic translation uses Chrome’s on-device language pack when available, with no OpenAI tokens. Review the result for the Spanish you want to use. On other browsers, use the free translator link and paste its result back here.</p></div>
+            <div class="block-toolbar translation-controls">
+                <label for="block-direction">Translate from <select id="block-direction"><option value="en-es">English → Spanish</option><option value="es-en">Spanish → English</option></select></label>
+                <button type="button" class="action" data-action="block-enable">Enable free live translation</button>
+                <button type="button" class="action" data-action="block-external">Open Google Translate ↗</button>
+                <button type="button" class="action" data-action="block-clear">Clear text</button>
+            </div>
+            <p class="block-translation-status" role="status">Preparing automatic translation where supported.</p>
+            <div class="block-fields">
+                <label for="block-english">English <textarea id="block-english" rows="13" maxlength="12000" placeholder="Paste or write English text here…"></textarea></label>
+                <label for="block-spanish">Spanish <textarea id="block-spanish" lang="es" rows="13" maxlength="12000" placeholder="Pega o escribe un texto en español aquí…"></textarea></label>
+            </div>
+            <div class="player" aria-label="Spanish listening controls">
+                <button type="button" class="action primary" data-action="block-play">▶ Listen to Spanish</button>
+                <button type="button" class="action" data-action="block-selection">▶ Hear selection</button>
+                <button type="button" class="action" data-action="stop" disabled>■ Stop</button>
+                <div class="speed-control"><label for="block-speed-range">Speed <output id="block-speed-value" for="block-speed-range">0.90×</output></label><input id="block-speed-range" class="speech-speed-range" type="range" min="0.30" max="1.20" step="0.05" value="0.90" aria-valuetext="0.90 times normal speed"><div class="speed-presets" aria-label="Speech speed presets"><button type="button" class="speed-preset" data-action="set-speed" data-rate="0.3">0.30×</button><button type="button" class="speed-preset" data-action="set-speed" data-rate="0.5">0.50×</button><button type="button" class="speed-preset" data-action="set-speed" data-rate="0.65">0.65×</button><button type="button" class="speed-preset" data-action="set-speed" data-rate="0.9">0.90×</button><button type="button" class="speed-preset" data-action="set-speed" data-rate="1.2">1.20×</button></div></div>
+                <label for="block-voice-select">Voice <select id="block-voice-select" class="voice-select"></select></label>
+                <button type="button" class="action" data-action="test-voice">Test</button>
+                <span class="audio-status" role="status">Ready to listen</span>
+            </div>
+        </article>
+    </section>
+</main>
+<footer class="site-footer">Independent practice examples. Use your official coursework and tutor feedback when preparing your own assignment.</footer>
+<div id="live-status" class="sr-only" role="status" aria-live="polite"></div>
+<script src="tmas.js"></script>
+<script src="vocab.js"></script>
+<script src="app.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5879e428b92005f',t:'MTc5NDM0MDU2Mg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5879e428b92005f',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
